@@ -13,6 +13,7 @@ object BluetoothCommunication {
     private lateinit var gattServer: BluetoothGattServer
     private var bleAdvertising: BluetoothLeAdvertiser? = null
     private val bleSettingsBuilder = BluetoothSettingsBuilder()
+    private var newMessageCallback : ((String) -> Unit)? = null
 
     fun startBLE(context: Context) {
         // Para usar API bluetooth de Android
@@ -30,21 +31,22 @@ object BluetoothCommunication {
         }
         bleAdvertising?.startAdvertising(bleSettingsBuilder.getAdvertisingSettings(),
             bleSettingsBuilder.getAdvertisingData(), BebeAdvertisingCallback())
-
     }
+
     fun stopAdvertising(){
         bleAdvertising?.stopAdvertising(BebeAdvertisingCallback())
     }
 
     fun sendMessage(message: String){}
 
-    fun listenNewMessages(newMessageCallback: (String) -> Unit){}
-
-    fun stopBLE(){}
+    fun listenNewMessages(callback: (String) -> Unit){
+        this.newMessageCallback = callback
+    }
 
     private class BebeGattServerCallback() : BluetoothGattServerCallback(){
         override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
             super.onConnectionStateChange(device, status, newState)
+            // Si el estado cambia se obtiene el siguiente estado, se traduce de INT a algo regible y se imprime
             val readableNewState = BluetoothStateInterpreter.getReadableState(newState)
             Log.i(TAG, "Connection State callback GattServer new state : $readableNewState device: $device" )
         }
@@ -72,7 +74,6 @@ object BluetoothCommunication {
                     Log.d("lajm", "onCharacteristicWriteRequest: Have heart rate: \"$heartRate\"")
                     Log.d("lajm", "onCharacteristicWriteRequest: Have breathing rate: \"$breathingRate\"")
                     Log.d("lajm", "onCharacteristicWriteRequest: Have temperature: \"$temperature\"")
-
                 }
         }
     }
