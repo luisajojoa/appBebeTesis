@@ -16,6 +16,7 @@ object BluetoothCommunication {
     private val bleSettingsBuilder = BluetoothSettingsBuilder()
     private var newMessageCallback : ((Message) -> Unit)? = null
 
+    // HashMap guarda una llave y un Valor, La llave es el tipo de msj y el valor es el ultimo valor recibido
     private val tempMessages = HashMap<String, String>()
 
     fun startBLE(context: Context) {
@@ -47,8 +48,13 @@ object BluetoothCommunication {
     }
 
     fun reportNewMessage(message: Message) {
-        val tempMessage = tempMessages[message.javaClass.simpleName]
-        if (tempMessage != null && tempMessage != message.value) {
+        val lastMessageValue = tempMessages[message.javaClass.simpleName]
+        if (lastMessageValue != null) {
+            if (lastMessageValue != message.value) {
+                tempMessages[message.javaClass.simpleName] = message.value
+                newMessageCallback?.invoke(message)
+            }
+        } else {
             tempMessages[message.javaClass.simpleName] = message.value
             newMessageCallback?.invoke(message)
         }
