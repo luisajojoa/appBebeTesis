@@ -5,6 +5,7 @@ import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
 import android.util.Log
+import com.tesis.bebeappble.common.Message
 import java.math.BigInteger
 
 
@@ -13,7 +14,9 @@ object BluetoothCommunication {
     private lateinit var gattServer: BluetoothGattServer
     private var bleAdvertising: BluetoothLeAdvertiser? = null
     private val bleSettingsBuilder = BluetoothSettingsBuilder()
-    private var newMessageCallback : ((String) -> Unit)? = null
+    private var newMessageCallback : ((Message) -> Unit)? = null
+
+    private val tempMessages = HashMap<String, String>()
 
     fun startBLE(context: Context) {
         // Para usar API bluetooth de Android
@@ -39,8 +42,16 @@ object BluetoothCommunication {
 
     fun sendMessage(message: String){}
 
-    fun listenNewMessages(callback: (String) -> Unit){
+    fun listenNewMessages(callback: (Message) -> Unit){
         this.newMessageCallback = callback
+    }
+
+    fun reportNewMessage(message: Message) {
+        val tempMessage = tempMessages[message.javaClass.simpleName]
+        if (tempMessage != null && tempMessage != message.value) {
+            tempMessages[message.javaClass.simpleName] = message.value
+            newMessageCallback?.invoke(message)
+        }
     }
 
     private class BebeGattServerCallback() : BluetoothGattServerCallback(){
@@ -70,10 +81,9 @@ object BluetoothCommunication {
                     val breathingRate = BigInteger(reversedArray?.sliceArray(IntRange(2,3)))
                     val temperature = BigInteger(reversedArray?.sliceArray(IntRange(4,5)))
 
-                    Log.d("lajm", "onCharacteristicWriteRequest: Have value.toString: \"${value?.size}\"")
-                    Log.d("lajm", "onCharacteristicWriteRequest: Have heart rate: \"$heartRate\"")
-                    Log.d("lajm", "onCharacteristicWriteRequest: Have breathing rate: \"$breathingRate\"")
-                    Log.d("lajm", "onCharacteristicWriteRequest: Have temperature: \"$temperature\"")
+                    reportNewMessage(Message.HeartRateMessage(heartRate.toString()))
+                    reportNewMessage(Message.BreathingRateMessage(breathingRate.toString()))
+                    reportNewMessage(Message.TemperatureMessage(temperature.toString()))
                 }
         }
     }
