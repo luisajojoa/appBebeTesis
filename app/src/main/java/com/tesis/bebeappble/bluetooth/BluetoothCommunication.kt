@@ -45,7 +45,7 @@ object BluetoothCommunication {
     }
 
     fun sendMessage(message: String){
-        val characteristic = gattClient?.getCharacteristic(ConstantsBle.SERVICE_UUID, ConstantsBle.SENDER_CHARACTERISTIC_UUID)
+        val characteristic = gattClient?.getCharacteristic(ConstantsBle.SERVICE_SENDER_UUID, ConstantsBle.SENDER_CHARACTERISTIC_UUID)
         if(characteristic!=null) {
             characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
             val messageByteArray = message.toByteArray()
@@ -89,10 +89,25 @@ object BluetoothCommunication {
 
             if(newState==BluetoothProfile.STATE_CONNECTED){
                 //conectarse a dispositivo remoto
-                device?.connectGatt(context,true, object : BluetoothGattCallback(){
+                device?.connectGatt(context,false, object : BluetoothGattCallback(){
+                    override fun onConnectionStateChange(
+                        gatt: BluetoothGatt?,
+                        status: Int,
+                        newState: Int
+                    ) {
+                        super.onConnectionStateChange(gatt, status, newState)
+                        val isSuccess = status == BluetoothGatt.GATT_SUCCESS
+                        val isConnected = newState == BluetoothProfile.STATE_CONNECTED
+                        Log.d(TAG, "onConnectionStateChange: Client $gatt  success: $isSuccess connected: $isConnected")
+                        // try to send a message to the other device as a test
+                        if (isSuccess && isConnected) {
+                            // discover services
+                            gatt?.discoverServices()
+                        }
+                    }
                     override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
                         super.onServicesDiscovered(gatt, status)
-                        val characteristic = gatt?.getCharacteristic(ConstantsBle.SERVICE_UUID, ConstantsBle.SENDER_CHARACTERISTIC_UUID)
+                        val characteristic = gatt?.getCharacteristic(ConstantsBle.SERVICE_SENDER_UUID, ConstantsBle.SENDER_CHARACTERISTIC_UUID)
                         if (characteristic != null && gattClient == null) {
                             gattClient = gatt
                         }

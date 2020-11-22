@@ -8,5 +8,5 @@ fun BluetoothGatt.getCharacteristic(
         uuidService: UUID,
         uuidCharacteristic: UUID
 ) : BluetoothGattCharacteristic? {
-    return this.getService(uuidService).getCharacteristic(uuidCharacteristic)
+    return this.getService(uuidService)?.getCharacteristic(uuidCharacteristic)
 }
