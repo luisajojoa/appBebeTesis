@@ -16,12 +16,6 @@ class BluetoothSettingsBuilder {
         )
         service.addCharacteristic(characteristicReceiver)
 
-        val characteristicSender = BluetoothGattCharacteristic(
-            ConstantsBle.SENDER_CHARACTERISTIC_UUID,
-            BluetoothGattCharacteristic.PROPERTY_WRITE,
-            BluetoothGattCharacteristic.PERMISSION_WRITE
-        )
-        service.addCharacteristic(characteristicSender)
         return service
     }
 

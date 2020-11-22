@@ -4,20 +4,25 @@ import android.bluetooth.*
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
 import android.util.Log
+import com.tesis.bebeappble.bluetooth.extension.getCharacteristic
 import com.tesis.bebeappble.common.Message
 import java.math.BigInteger
 
 
-object BleListenerMessages {
+object BluetoothCommunication {
 
     private lateinit var gattServer: BluetoothGattServer
     private var bleAdvertising: BluetoothLeAdvertiser? = null
     private val bleSettingsBuilder = BluetoothSettingsBuilder()
     private var newMessageCallback : ((Message) -> Unit)? = null
+    private lateinit var context: Context
+    private var gattClient: BluetoothGatt?= null
+
     // HashMap guarda una llave y un Valor, La llave es el tipo de msj y el valor es el ultimo valor recibido
     private val tempMessages = HashMap<String, String>()
 
     fun startBLE(context: Context) {
+        this.context = context
         // Para usar API bluetooth de Android
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         // Creando un GattServer
@@ -37,6 +42,24 @@ object BleListenerMessages {
 
     fun stopAdvertising(){
         bleAdvertising?.stopAdvertising(BebeAdvertisingCallback())
+    }
+
+    fun sendMessage(message: String){
+        val characteristic = gattClient?.getCharacteristic(ConstantsBle.SERVICE_SENDER_UUID, ConstantsBle.SENDER_CHARACTERISTIC_UUID)
+        if(characteristic!=null) {
+            characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+            val messageByteArray = message.toByteArray()
+            characteristic.value = messageByteArray
+            //Al cambiar la caracteristica, se envia el mensaje
+            val success = gattClient?.writeCharacteristic(characteristic) ?: false
+            if (success){
+                Log.i(TAG, "Mensaje enviado!! :)")
+            }else{
+                Log.i(TAG, "Error al enviar mensaje, BleGatt es : $gattClient")
+            }
+        }else{
+            Log.i(TAG, "NULL characteristic sender $characteristic")
+        }
     }
 
     fun listenNewMessages(callback: (Message) -> Unit){
@@ -62,6 +85,35 @@ object BleListenerMessages {
             // Si el estado cambia se obtiene el siguiente estado, se traduce de INT a algo regible y se imprime
             val readableNewState = BluetoothStateInterpreter.getReadableState(newState)
             Log.i(TAG, "Connection State callback GattServer new state : $readableNewState device: $device" )
+            //Cuando el estado cambie a conectado, entonces se instancia el BluetoothGatt (que se usa para enviar mensajes)
+
+            if(newState==BluetoothProfile.STATE_CONNECTED){
+                //conectarse a dispositivo remoto
+                device?.connectGatt(context,false, object : BluetoothGattCallback(){
+                    override fun onConnectionStateChange(
+                        gatt: BluetoothGatt?,
+                        status: Int,
+                        newState: Int
+                    ) {
+                        super.onConnectionStateChange(gatt, status, newState)
+                        val isSuccess = status == BluetoothGatt.GATT_SUCCESS
+                        val isConnected = newState == BluetoothProfile.STATE_CONNECTED
+                        Log.d(TAG, "onConnectionStateChange: Client $gatt  success: $isSuccess connected: $isConnected")
+                        // try to send a message to the other device as a test
+                        if (isSuccess && isConnected) {
+                            // discover services
+                            gatt?.discoverServices()
+                        }
+                    }
+                    override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+                        super.onServicesDiscovered(gatt, status)
+                        val characteristic = gatt?.getCharacteristic(ConstantsBle.SERVICE_SENDER_UUID, ConstantsBle.SENDER_CHARACTERISTIC_UUID)
+                        if (characteristic != null && gattClient == null) {
+                            gattClient = gatt
+                        }
+                    }
+                })
+            }
         }
             // AQUI LLEGAN MENSAJES!
         override fun onCharacteristicWriteRequest(
@@ -88,9 +140,5 @@ object BleListenerMessages {
                     reportNewMessage(Message.TemperatureMessage(temperature.toString()))
                 }
         }
-    }
-    // no reportar un nuevo mensaje
-    fun stopListenMessages(){
-        newMessageCallback = null
     }
 }
