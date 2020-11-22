@@ -5,7 +5,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.tesis.bebeappble.bluetooth.BleListenerMessages
+import com.tesis.bebeappble.bluetooth.BluetoothCommunication
+
 
 import com.tesis.bebeappble.bluetooth.TAG
 import com.tesis.bebeappble.common.Message
@@ -21,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         retrieveViews()
         addListeners()
-        BleListenerMessages.startBLE(this)
+        BluetoothCommunication.startBLE(this)
     }
 
     private fun retrieveViews() {
@@ -32,13 +33,14 @@ class MainActivity : AppCompatActivity() {
     private fun addListeners() {
         btnSendMessage.setOnClickListener {
             val msj = editTextMessage.text.toString()
+            BluetoothCommunication.sendMessage(msj)
         }
     }
 
     override fun onStart() {
         super.onStart()
-        BleListenerMessages.startAdvertising()
-        BleListenerMessages.listenNewMessages { message ->
+        BluetoothCommunication.startAdvertising()
+        BluetoothCommunication.listenNewMessages { message ->
             when(message) {
                 is Message.HeartRateMessage -> Log.i(TAG, "Heart Rate: ${message.value}")
                 is Message.TemperatureMessage ->Log.i(TAG, "Temperature: ${message.value}")
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        BleListenerMessages.stopAdvertising()
-        BleListenerMessages.stopListenMessages()
+        BluetoothCommunication.stopAdvertising()
+        BluetoothCommunication.stopListeningMessages()
     }
 }

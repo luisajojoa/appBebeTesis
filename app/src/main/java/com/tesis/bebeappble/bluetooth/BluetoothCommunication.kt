@@ -78,7 +78,10 @@ object BluetoothCommunication {
             newMessageCallback?.invoke(message)
         }
     }
-
+    fun stopListeningMessages(){
+        //no reportar un nuevo mensaje
+        newMessageCallback = null
+    }
     private class BebeGattServerCallback() : BluetoothGattServerCallback(){
         override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
             super.onConnectionStateChange(device, status, newState)
