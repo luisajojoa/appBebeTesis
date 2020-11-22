@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BebeAppBle</string>
+    <string name="mensaje">Mensaje</string>
 </resources>
