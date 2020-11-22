@@ -1,7 +1,12 @@
 package com.tesis.bebeappble.bluetooth.extension
 
-import android.bluetooth.BluetoothGattServer
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCharacteristic
+import java.util.*
 
-fun BluetoothGattServer.getCharacteristic(){
-
+fun BluetoothGatt.getCharacteristic(
+        uuidService: UUID,
+        uuidCharacteristic: UUID
+) : BluetoothGattCharacteristic? {
+    return this.getService(uuidService).getCharacteristic(uuidCharacteristic)
 }
