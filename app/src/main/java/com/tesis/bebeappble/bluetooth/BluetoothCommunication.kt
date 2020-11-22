@@ -1,7 +1,6 @@
 package com.tesis.bebeappble.bluetooth
 
 import android.bluetooth.*
-import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
 import android.util.Log
@@ -15,11 +14,14 @@ object BluetoothCommunication {
     private var bleAdvertising: BluetoothLeAdvertiser? = null
     private val bleSettingsBuilder = BluetoothSettingsBuilder()
     private var newMessageCallback : ((Message) -> Unit)? = null
+    private lateinit var context: Context
+    private var bleGatt: BluetoothGatt?= null
 
     // HashMap guarda una llave y un Valor, La llave es el tipo de msj y el valor es el ultimo valor recibido
     private val tempMessages = HashMap<String, String>()
 
     fun startBLE(context: Context) {
+        this.context = context
         // Para usar API bluetooth de Android
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         // Creando un GattServer
@@ -41,7 +43,23 @@ object BluetoothCommunication {
         bleAdvertising?.stopAdvertising(BebeAdvertisingCallback())
     }
 
-    fun sendMessage(message: String){}
+    fun sendMessage(message: String){
+        val characteristic = bleGatt?.getService(ConstantsBle.SERVICE_UUID)?.getCharacteristic(ConstantsBle.SENDER_CHARACTERISTIC_UUID)
+        if(characteristic!=null) {
+            characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+            val messageByteArray = message.toByteArray()
+            characteristic.value = messageByteArray
+            //Al cambiar la caracteristica, se envia el mensaje
+            val success = bleGatt?.writeCharacteristic(characteristic) ?: false
+            if (success){
+                Log.i(TAG, "Mensaje enviado!! :)")
+            }else{
+                Log.i(TAG, "Error al enviar mensaje, BleGatt es : $bleGatt")
+            }
+        }else{
+            Log.i(TAG, "NULL characteristic sender $characteristic")
+        }
+    }
 
     fun listenNewMessages(callback: (Message) -> Unit){
         this.newMessageCallback = callback
@@ -66,6 +84,18 @@ object BluetoothCommunication {
             // Si el estado cambia se obtiene el siguiente estado, se traduce de INT a algo regible y se imprime
             val readableNewState = BluetoothStateInterpreter.getReadableState(newState)
             Log.i(TAG, "Connection State callback GattServer new state : $readableNewState device: $device" )
+            //Cuando el estado cambie a conectado, entonces se instancia el BluetoothGatt (que se usa para enviar mensajes)
+            if(newState==BluetoothProfile.STATE_CONNECTED){
+                //conectarse a dispositivo remoto
+                device?.connectGatt(context,true, object : BluetoothGattCallback(){
+                    override fun onConnectionStateChange(
+                        gatt: BluetoothGatt?, status: Int, newState: Int
+                    ) {
+                        super.onConnectionStateChange(gatt, status, newState)
+                        bleGatt = gatt
+                    }
+                })
+            }
         }
             // AQUI LLEGAN MENSAJES!
         override fun onCharacteristicWriteRequest(
@@ -78,7 +108,7 @@ object BluetoothCommunication {
             value: ByteArray?
         ) {
             super.onCharacteristicWriteRequest( device, requestId, characteristic, preparedWrite, responseNeeded, offset, value)
-                if (characteristic?.uuid == ConstantsBle.CHARACTERISTIC_UUID) {
+                if (characteristic?.uuid == ConstantsBle.RECEIVER_CHARACTERISTIC_UUID) {
                     gattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null)
                     /* The data received comes backwards to its original order, so it's been reversed and then
                        the specific byte of each vital sign is taken out of the complete array  */

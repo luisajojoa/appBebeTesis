@@ -5,17 +5,23 @@ import android.bluetooth.BluetoothGattService
 import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
 import android.os.ParcelUuid
-import android.provider.SyncStateContract
 
 class BluetoothSettingsBuilder {
     fun getBLEGatService(): BluetoothGattService {
         val service = BluetoothGattService(ConstantsBle.SERVICE_UUID, BluetoothGattService.SERVICE_TYPE_PRIMARY)
-        val characteristic = BluetoothGattCharacteristic(
-            ConstantsBle.CHARACTERISTIC_UUID,
+        val characteristicReceiver = BluetoothGattCharacteristic(
+            ConstantsBle.RECEIVER_CHARACTERISTIC_UUID,
             BluetoothGattCharacteristic.PROPERTY_WRITE,
             BluetoothGattCharacteristic.PERMISSION_WRITE
         )
-        service.addCharacteristic(characteristic)
+        service.addCharacteristic(characteristicReceiver)
+
+        val characteristicSender = BluetoothGattCharacteristic(
+            ConstantsBle.SENDER_CHARACTERISTIC_UUID,
+            BluetoothGattCharacteristic.PROPERTY_WRITE,
+            BluetoothGattCharacteristic.PERMISSION_WRITE
+        )
+        service.addCharacteristic(characteristicSender)
         return service
     }
 
