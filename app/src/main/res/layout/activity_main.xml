@@ -29,23 +29,33 @@
 
     <ImageButton
         android:id="@+id/btnBebe"
-        android:layout_width="451dp"
-        android:layout_height="566dp"
+        android:layout_width="435dp"
+        android:layout_height="374dp"
+        android:layout_marginBottom="20dp"
         android:background="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/imgTermometer"
+        app:layout_constraintBottom_toTopOf="@+id/videoViewBebe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/redbaby" />
 
-    <ImageView
-        android:id="@+id/imgTermometer"
-        android:layout_width="108dp"
-        android:layout_height="130dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnSendMessaje"
+    <VideoView
+        android:id="@+id/videoViewBebe"
+        android:layout_width="314dp"
+        android:layout_height="292dp"
+        app:layout_constraintBottom_toTopOf="@+id/editTextMsj"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.453"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/play"
+        app:layout_constraintBottom_toTopOf="@+id/videoViewBebe"
+        app:layout_constraintEnd_toEndOf="@+id/btnBebe"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/temometro" />
+        app:layout_constraintTop_toTopOf="@+id/btnBebe" />
 </androidx.constraintlayout.widget.ConstraintLayout>

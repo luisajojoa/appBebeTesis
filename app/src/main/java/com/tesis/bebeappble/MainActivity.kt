@@ -1,34 +1,40 @@
 package com.tesis.bebeappble
 
+
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.tesis.bebeappble.bluetooth.BluetoothCommunication
-
-
 import com.tesis.bebeappble.bluetooth.TAG
 import com.tesis.bebeappble.common.Message
+import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var editTextMessage: EditText
     private lateinit var btnSendMessage: Button
     private lateinit var btnBebe: ImageButton
-    private lateinit var imgTermometer: ImageView
     private lateinit var mediaPlayer : MediaPlayer
+    private lateinit var videoView : VideoView
+    private lateinit var btnVideo : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mediaPlayer = MediaPlayer.create(this, R.raw.bebellorando )
+
         retrieveViews()
         addListeners()
+
+        val path = "android.resource://" + packageName + "/" + R.raw.bebevideo
+        videoView.setVideoURI(Uri.parse(path))
+
+
         BluetoothCommunication.startBLE(this)
     }
 
@@ -36,7 +42,9 @@ class MainActivity : AppCompatActivity() {
         btnSendMessage = findViewById(R.id.btnSendMessaje)
         editTextMessage = findViewById(R.id.editTextMsj)
         btnBebe = findViewById(R.id.btnBebe)
-        imgTermometer = findViewById(R.id.imgTermometer)
+        videoView  = findViewById(R.id.videoViewBebe)
+        btnVideo = findViewById(R.id.btnPlay)
+
     }
 
     private fun addListeners() {
@@ -48,6 +56,18 @@ class MainActivity : AppCompatActivity() {
             var imageBebe = ContextCompat.getDrawable(this,R.drawable.bebeas)
             btnBebe.setImageDrawable(imageBebe)
             mediaPlayer.start()
+        }
+        btnVideo.setOnClickListener {
+            val isPlaying = videoView.isPlaying
+            btnPlay.setText(if (isPlaying) R.string.play else R.string.pause)
+
+            val msg = getString(if (isPlaying) R.string.paused else R.string.playing)
+            Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+            if (isPlaying) {
+                videoView.pause()
+            } else {
+                videoView.start()
+            }
         }
     }
 

@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">BebeAppBle</string>
     <string name="mensaje">Mensaje</string>
+    
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="paused">Paused</string>
+    <string name="playing">Playing</string>
 </resources>
