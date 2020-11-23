@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.tesis.bebeappble.bluetooth.BluetoothCommunication
 
 
@@ -15,7 +18,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var editTextMessage: EditText
     private lateinit var btnSendMessage: Button
-
+    private lateinit var btnBebe: ImageButton
+    private lateinit var imgTermometer: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -28,12 +32,18 @@ class MainActivity : AppCompatActivity() {
     private fun retrieveViews() {
         btnSendMessage = findViewById(R.id.btnSendMessaje)
         editTextMessage = findViewById(R.id.editTextMsj)
+        btnBebe = findViewById(R.id.btnBebe)
+        imgTermometer = findViewById(R.id.imgTermometer)
     }
 
     private fun addListeners() {
         btnSendMessage.setOnClickListener {
             val msj = editTextMessage.text.toString()
             BluetoothCommunication.sendMessage(msj)
+        }
+        btnBebe.setOnClickListener{
+            var imageBebe = ContextCompat.getDrawable(this,R.drawable.bebeas)
+            btnBebe.setImageDrawable(imageBebe)
         }
     }
 
