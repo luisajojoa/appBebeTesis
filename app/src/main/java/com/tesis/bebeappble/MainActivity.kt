@@ -1,5 +1,6 @@
 package com.tesis.bebeappble
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -20,10 +21,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnSendMessage: Button
     private lateinit var btnBebe: ImageButton
     private lateinit var imgTermometer: ImageView
+    private lateinit var mediaPlayer : MediaPlayer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        mediaPlayer = MediaPlayer.create(this, R.raw.bebellorando )
         retrieveViews()
         addListeners()
         BluetoothCommunication.startBLE(this)
@@ -44,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         btnBebe.setOnClickListener{
             var imageBebe = ContextCompat.getDrawable(this,R.drawable.bebeas)
             btnBebe.setImageDrawable(imageBebe)
+            mediaPlayer.start()
         }
     }
 
@@ -63,5 +67,6 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         BluetoothCommunication.stopAdvertising()
         BluetoothCommunication.stopListeningMessages()
+        //mediaPlayer.stop()
     }
 }
