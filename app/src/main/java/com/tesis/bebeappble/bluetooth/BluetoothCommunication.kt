@@ -45,20 +45,24 @@ object BluetoothCommunication {
     }
 
     fun sendMessage(message: String){
+        // An object of type GattClient's characteristic is obtained trough the UIID of the send service and characteristic required
         val characteristic = gattClient?.getCharacteristic(ConstantsBle.SERVICE_SENDER_UUID, ConstantsBle.SENDER_CHARACTERISTIC_UUID)
         if(characteristic!=null) {
+            //the characteristic's type is set up to write type for sending data
             characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+            // The message to be sent is converted to an array of bytes
             val messageByteArray = message.toByteArray()
+            // The array is sent to the remote device by changing the attribute "value" of the characteristic object
             characteristic.value = messageByteArray
-            //Al cambiar la caracteristica, se envia el mensaje
+            // Then the delivery status is retrieved
             val success = gattClient?.writeCharacteristic(characteristic) ?: false
             if (success){
-                Log.i(TAG, "Mensaje enviado!! :)")
+                Log.i(TAG, "Message sent!! :)")
             }else{
-                Log.i(TAG, "Error al enviar mensaje, BleGatt es : $gattClient")
+                Log.i(TAG, "Message sent failure, BleGattClient is : $gattClient")
             }
         }else{
-            Log.i(TAG, "NULL characteristic sender $characteristic")
+            Log.i(TAG, "NULL characteristic sender")
         }
     }
 
@@ -91,7 +95,7 @@ object BluetoothCommunication {
             //Cuando el estado cambie a conectado, entonces se instancia el BluetoothGatt (que se usa para enviar mensajes)
 
             if(newState==BluetoothProfile.STATE_CONNECTED){
-                //conectarse a dispositivo remoto
+                //intenta conectarse a dispositivo remoto. Asi comienza a buscar servicios nuevos en su conexion
                 device?.connectGatt(context,false, object : BluetoothGattCallback(){
                     override fun onConnectionStateChange(
                         gatt: BluetoothGatt?,
@@ -112,6 +116,7 @@ object BluetoothCommunication {
                         super.onServicesDiscovered(gatt, status)
                         val characteristic = gatt?.getCharacteristic(ConstantsBle.SERVICE_SENDER_UUID, ConstantsBle.SENDER_CHARACTERISTIC_UUID)
                         if (characteristic != null && gattClient == null) {
+                            // se crea gatt client para no tener que escanear
                             gattClient = gatt
                         }
                     }

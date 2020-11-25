@@ -58,4 +58,17 @@
         app:layout_constraintEnd_toEndOf="@+id/btnBebe"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btnBebe" />
+
+    <SeekBar
+        android:id="@+id/temperaturaSlider"
+        android:layout_width="136dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="19dp"
+        android:max="40"
+        android:min="30"
+        android:progress="36"
+        app:layout_constraintBottom_toBottomOf="@+id/videoViewBebe"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnBebe" />
 </androidx.constraintlayout.widget.ConstraintLayout>
