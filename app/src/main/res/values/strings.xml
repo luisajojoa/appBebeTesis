@@ -6,4 +6,6 @@
     <string name="pause">Pause</string>
     <string name="paused">Paused</string>
     <string name="playing">Playing</string>
+    <string name="textName">Nombre:</string>
+    <string name="textAge">Edad:</string>
 </resources>

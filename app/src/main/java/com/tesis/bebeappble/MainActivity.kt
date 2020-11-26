@@ -7,31 +7,30 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.tesis.bebeappble.bluetooth.BluetoothCommunication
 import com.tesis.bebeappble.bluetooth.TAG
 import com.tesis.bebeappble.common.Message
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.properties.Delegates
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var editTextMessage: EditText
     private lateinit var btnSendMessage: Button
-    private lateinit var btnBebe: ImageButton
+
     private lateinit var mediaPlayer : MediaPlayer
     private lateinit var videoView : VideoView
     private lateinit var btnVideo : Button
     private lateinit var path1 : String
     private lateinit var path2 : String
     private lateinit var sliderTemp: SeekBar
-    private var temperature : Int ?=null
-    private var imagenBebe : Drawable?=null
+    private var imageBaby : Drawable?=null
     private lateinit var context : Context
-
+    private var enableVideo =0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,17 +41,16 @@ class MainActivity : AppCompatActivity() {
         retrieveViews()
         addListeners()
 
-        path1 = "android.resource://" + packageName + "/" + R.raw.bebevideo
+        path1 = "android.resource://" + packageName + "/" + R.raw.videotermometro
         path2 = "android.resource://" + packageName + "/" + R.raw.video1
-
+        videoView.setVideoURI(Uri.parse(path1))
 
         BluetoothCommunication.startBLE(this)
     }
 
     private fun retrieveViews() {
-        btnSendMessage = findViewById(R.id.btnSendMessaje)
-        editTextMessage = findViewById(R.id.editTextMsj)
-        btnBebe = findViewById(R.id.btnBebe)
+
+
         videoView  = findViewById(R.id.videoViewBebe)
         btnVideo = findViewById(R.id.btnPlay)
         sliderTemp = findViewById(R.id.temperaturaSlider)
@@ -60,30 +58,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addListeners() {
-        btnSendMessage.setOnClickListener {
+        //ENVIO DE DATOS!!
+        /*btnSendMessage.setOnClickListener {
             val msj = editTextMessage.text.toString()
             BluetoothCommunication.sendMessage(msj)
-        }
+        }*/
        /* btnBebe.setOnClickListener{
             var imageBebe = ContextCompat.getDrawable(this,R.drawable.bebeas)
             btnBebe.setImageDrawable(imageBebe)
             //mediaPlayer.start()
             playingVideo(videoView, path2)
         }*/
+        btnVideo.setOnLongClickListener {
+            videoView.visibility = View.INVISIBLE
+            Log.i("video", "videoview is visible? : ${videoView.isVisible}")
+            return@setOnLongClickListener true
+        }
+
         btnVideo.setOnClickListener {
-            playingVideo(videoView, path1)
+
+            if( enableVideo ==0){
+                mediaPlayer.start()
+                enableVideo =1
+
+            }else{
+                enableVideo= 0
+                mediaPlayer.pause()
+
+            }
+
         }
         var startPoint : Int?= null
         var endPoint :Int ?= null
         sliderTemp.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                when(progress){
-                    in 30..32 -> imagenBebe = ContextCompat.getDrawable(context,R.drawable.bebeas)
-                    in 33..35 -> imagenBebe = ContextCompat.getDrawable(context,R.drawable.redbaby)
-                    in 36..38 -> imagenBebe = ContextCompat.getDrawable(context,R.drawable.redbaby1)
-                    else -> imagenBebe = ContextCompat.getDrawable(context,R.drawable.redbaby2)
-                }
-                btnBebe.setImageDrawable(imagenBebe)
+                /*when(progress){
+                    in 30..32 -> imageBaby = ContextCompat.getDrawable(context,R.drawable.bebeas)
+                    in 33..35 -> imageBaby = ContextCompat.getDrawable(context,R.drawable.redbaby)
+                    in 36..38 -> imageBaby = ContextCompat.getDrawable(context,R.drawable.redbaby1)
+                    else -> imageBaby = ContextCompat.getDrawable(context,R.drawable.redbaby2)
+                }*/
+                //btnBebe.setImageDrawable(imageBaby)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -96,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         })
 
     }
-    private fun playingVideo(videoView: VideoView, path:String){
+  /*  private fun playingVideo(videoView: VideoView, path:String){
         videoView.setVideoURI(Uri.parse(path))
         val isPlaying = videoView.isPlaying
         val msg = getString(if (isPlaying) R.string.paused else R.string.playing)
@@ -106,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             videoView.start()
         }
-    }
+    }*/
     override fun onStart() {
         super.onStart()
         BluetoothCommunication.startAdvertising()
@@ -117,6 +132,7 @@ class MainActivity : AppCompatActivity() {
                 is Message.BreathingRateMessage -> Log.i(TAG, "Breathing Rate: ${message.value}")
             }
         }
+        //playingVideo(videoView, path1)
     }
 
     override fun onStop() {
