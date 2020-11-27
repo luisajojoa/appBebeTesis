@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     private var imageBaby : Drawable?=null
     private lateinit var context : Context
     private var enableVideo =0
+    private lateinit var termometerIcon : ImageButton
+    private lateinit var heartIcon : ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +61,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addListeners() {
+
+
         //ENVIO DE DATOS!!
         /*btnSendMessage.setOnClickListener {
             val msj = editTextMessage.text.toString()
@@ -69,11 +74,17 @@ class MainActivity : AppCompatActivity() {
             //mediaPlayer.start()
             playingVideo(videoView, path2)
         }*/
+
+        termometerIcon.setOnClickListener{
+            AlertDialog.Builder(this).setView()
+        }
+
         btnVideo.setOnLongClickListener {
             videoView.visibility = View.INVISIBLE
             Log.i("video", "videoview is visible? : ${videoView.isVisible}")
             return@setOnLongClickListener true
         }
+
 
         btnVideo.setOnClickListener {
 

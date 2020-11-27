@@ -15,77 +15,31 @@
         android:layout_height="90dp"
         android:background="@drawable/custom2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/containerBabyInfo"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/containerBabyInfo"
-        android:layout_width="240dp"
-        android:layout_height="78dp"
-        android:layout_marginStart="68dp"
-        android:background="@drawable/custom"
-        app:layout_constraintBottom_toTopOf="@+id/textView5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/ageMyBaby"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:fontFamily="@font/capriola"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/carter_one"
         android:text="1 día de nacida"
         android:textAlignment="center"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textBabyAge"
-        app:layout_constraintStart_toEndOf="@+id/textBabyAge"
-        app:layout_constraintTop_toTopOf="@+id/textBabyAge"
-        app:layout_constraintVertical_bias="0.0" />
-
-
-    <TextView
-        android:id="@+id/textBabyName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/capriola"
-        android:text="@string/textName"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/containerBabyInfo"
-        app:layout_constraintEnd_toEndOf="@+id/containerBabyInfo"
-        app:layout_constraintHorizontal_bias="0.069"
-        app:layout_constraintStart_toStartOf="@+id/containerBabyInfo"
-        app:layout_constraintTop_toTopOf="@+id/containerBabyInfo"
-        app:layout_constraintVertical_bias="0.159" />
+        app:layout_constraintStart_toStartOf="@+id/nameMyBaby"
+        app:layout_constraintTop_toBottomOf="@+id/nameMyBaby" />
 
     <TextView
         android:id="@+id/nameMyBaby"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:fontFamily="@font/capriola"
-        android:text="Victoria"
+        android:layout_width="136dp"
+        android:layout_height="40dp"
+        android:fontFamily="@font/carter_one"
+        android:text="VICTORIA"
         android:textAlignment="center"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/ageMyBaby"
-        app:layout_constraintStart_toEndOf="@+id/textBabyName"
-        app:layout_constraintTop_toTopOf="@+id/textBabyName"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/textBabyAge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:fontFamily="@font/capriola"
-        android:text="@string/textAge"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/textBabyName"
-        app:layout_constraintTop_toTopOf="@+id/textBabyName" />
+        android:textSize="24sp"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp" />
 
     <VideoView
         android:id="@+id/videoViewBebe"
@@ -143,8 +97,8 @@
 
     <ImageButton
         android:id="@+id/buttonHeartIconb"
-        android:layout_width="79dp"
-        android:layout_height="57dp"
+        android:layout_width="68dp"
+        android:layout_height="52dp"
         android:layout_marginStart="112dp"
         android:background="@android:color/transparent"
         android:scaleType="fitStart"
@@ -159,8 +113,8 @@
 
     <ImageButton
         android:id="@+id/imageButton3"
-        android:layout_width="80dp"
-        android:layout_height="58dp"
+        android:layout_width="71dp"
+        android:layout_height="55dp"
         android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
         android:scaleType="centerInside"
@@ -182,9 +136,7 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/containerAmbientTemperature"
         app:layout_constraintEnd_toEndOf="@+id/containerAmbientTemperature"
-        app:layout_constraintStart_toEndOf="@+id/temperaturaSlider"
-        app:layout_constraintTop_toBottomOf="@+id/containerBabyInfo"
-        app:layout_constraintVertical_bias="0.901" />
+        app:layout_constraintStart_toEndOf="@+id/temperaturaSlider" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
