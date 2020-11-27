@@ -103,16 +103,16 @@
         android:background="@android:color/transparent"
         android:scaleType="fitStart"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/imageButton3"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton3"
+        app:layout_constraintBottom_toBottomOf="@+id/imgBtnTermometro"
+        app:layout_constraintEnd_toStartOf="@+id/imgBtnTermometro"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView5"
-        app:layout_constraintTop_toTopOf="@+id/imageButton3"
+        app:layout_constraintTop_toTopOf="@+id/imgBtnTermometro"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/hearticon" />
 
     <ImageButton
-        android:id="@+id/imageButton3"
+        android:id="@+id/imgBtnTermometro"
         android:layout_width="71dp"
         android:layout_height="55dp"
         android:layout_marginEnd="16dp"

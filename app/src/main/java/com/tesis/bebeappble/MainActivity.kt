@@ -1,13 +1,17 @@
 package com.tesis.bebeappble
 
 
+import android.app.Dialog
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -45,19 +49,18 @@ class MainActivity : AppCompatActivity() {
         addListeners()
 
         path1 = "android.resource://" + packageName + "/" + R.raw.videotermometro
-        path2 = "android.resource://" + packageName + "/" + R.raw.video1
+        // path2 = "android.resource://" + packageName + "/" + R.raw.video1
         videoView.setVideoURI(Uri.parse(path1))
 
         BluetoothCommunication.startBLE(this)
     }
 
     private fun retrieveViews() {
-
-
         videoView  = findViewById(R.id.videoViewBebe)
         btnVideo = findViewById(R.id.btnPlay)
         sliderTemp = findViewById(R.id.temperaturaSlider)
-
+        termometerIcon = findViewById(R.id.imgBtnTermometro)
+        heartIcon = findViewById(R.id.buttonHeartIconb)
     }
 
     private fun addListeners() {
@@ -76,12 +79,16 @@ class MainActivity : AppCompatActivity() {
         }*/
 
         termometerIcon.setOnClickListener{
-            AlertDialog.Builder(this).setView()
+            showMeasure(R.drawable.ic_temperature_mesure, "40")
+        }
+
+        heartIcon.setOnClickListener {
+            showMeasure(R.drawable.ic_heart_rate_mesure, "30")
         }
 
         btnVideo.setOnLongClickListener {
             videoView.visibility = View.INVISIBLE
-            Log.i("video", "videoview is visible? : ${videoView.isVisible}")
+//            Log.i("video", "videoview is visible? : ${videoView.isVisible}")
             return@setOnLongClickListener true
         }
 
@@ -133,6 +140,19 @@ class MainActivity : AppCompatActivity() {
             videoView.start()
         }
     }*/
+
+    private fun showMeasure(icon: Int, messure: String) {
+        val view = layoutInflater.inflate(R.layout.layout_show_measurements, null, false)
+        val icon = getDrawable(icon)
+        view.findViewById<ImageView>(R.id.imgIcon).setImageDrawable(icon)
+        view.findViewById<TextView>(R.id.txtMesure).text = messure
+        val dialog = Dialog(this).apply {
+            window?.requestFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+            setContentView(view)
+        }
+        dialog.show()
+    }
     override fun onStart() {
         super.onStart()
         BluetoothCommunication.startAdvertising()
