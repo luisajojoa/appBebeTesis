@@ -10,14 +10,24 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/containerAmbientTemperature"
+        android:layout_width="238dp"
+        android:layout_height="90dp"
+        android:background="@drawable/custom2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/containerBabyInfo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/containerBabyInfo"
         android:layout_width="240dp"
         android:layout_height="78dp"
+        android:layout_marginStart="68dp"
         android:background="@drawable/custom"
         app:layout_constraintBottom_toTopOf="@+id/textView5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.187" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/ageMyBaby"
@@ -97,6 +107,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="gone" />
 
+
     <SeekBar
         android:id="@+id/temperaturaSlider"
         style="@android:style/Widget.DeviceDefault.Light.SeekBar"
@@ -108,25 +119,27 @@
         android:progress="36"
         android:progressTint="#E91E63"
         android:thumbTint="#FFC107"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/containerAmbientTemperature"
         app:layout_constraintEnd_toEndOf="@+id/textView5"
+        app:layout_constraintHorizontal_bias="0.17"
         app:layout_constraintStart_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
-
+        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="52dp"
+        android:layout_width="175dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
         android:fontFamily="@font/capriola"
         android:text="Temperatura de la incubadora:"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/secondary_text_light"
+        android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageButton3" />
+        app:layout_constraintEnd_toEndOf="@+id/containerAmbientTemperature"
+        app:layout_constraintStart_toStartOf="@+id/containerAmbientTemperature"
+        app:layout_constraintTop_toTopOf="@+id/containerAmbientTemperature" />
 
     <ImageButton
         android:id="@+id/buttonHeartIconb"
@@ -159,6 +172,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.917"
         app:srcCompat="@drawable/temperatureicon" />
+
+    <TextView
+        android:id="@+id/ambientTemperatur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/capriola"
+        android:text="36.5 Cº"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/containerAmbientTemperature"
+        app:layout_constraintEnd_toEndOf="@+id/containerAmbientTemperature"
+        app:layout_constraintStart_toEndOf="@+id/temperaturaSlider"
+        app:layout_constraintTop_toBottomOf="@+id/containerBabyInfo"
+        app:layout_constraintVertical_bias="0.901" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
