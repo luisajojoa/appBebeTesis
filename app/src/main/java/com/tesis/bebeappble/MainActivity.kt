@@ -75,9 +75,7 @@ class MainActivity : AppCompatActivity() {
             playingVideo(videoView, path2)
         }*/
 
-        termometerIcon.setOnClickListener{
-            AlertDialog.Builder(this).setView()
-        }
+
 
         btnVideo.setOnLongClickListener {
             videoView.visibility = View.INVISIBLE
