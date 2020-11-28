@@ -20,6 +20,7 @@ import androidx.core.view.isVisible
 import com.tesis.bebeappble.bluetooth.BluetoothCommunication
 import com.tesis.bebeappble.bluetooth.TAG
 import com.tesis.bebeappble.common.Message
+import com.tesis.bebeappble.sensors.AbruptMovementsDetector
 
 
 class MainActivity : AppCompatActivity() {
@@ -53,6 +54,10 @@ class MainActivity : AppCompatActivity() {
         videoView.setVideoURI(Uri.parse(path1))
 
         BluetoothCommunication.startBLE(this)
+        // ESTE ES EL CALLBACK DEL ABRUPTMOVEMENTS
+        AbruptMovementsDetector(this).addMovementsListener {
+            Log.i("lajm", "Movimiento abrupto! cuidado con Victoria ")
+        }
     }
 
     private fun retrieveViews() {
