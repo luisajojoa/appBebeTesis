@@ -79,11 +79,11 @@ class MainActivity : AppCompatActivity() {
         }*/
 
         termometerIcon.setOnClickListener{
-            showMeasure(R.drawable.ic_temperature_mesure, "40")
+            showMeasure(R.drawable.ic_temperature__mesure, "40 ºC")
         }
 
         heartIcon.setOnClickListener {
-            showMeasure(R.drawable.ic_heart_rate_mesure, "30")
+            showMeasure(R.drawable.ic_heart_rate_mesure, "30 bpm")
         }
 
         btnVideo.setOnLongClickListener {

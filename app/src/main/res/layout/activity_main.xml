@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bebesaludable"
+    android:background="@drawable/super_blue_baby"
     android:backgroundTintMode="screen"
     android:rotation="0"
     tools:context=".MainActivity">
@@ -38,10 +38,10 @@
         android:id="@+id/nameMyBaby"
         android:layout_width="161dp"
         android:layout_height="42dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/carter_one"
-        android:text="VICTORIA"
+        android:text="VICTORIA,"
         android:textAlignment="center"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -103,8 +103,8 @@
 
     <ImageButton
         android:id="@+id/buttonHeartIconb"
-        android:layout_width="57dp"
-        android:layout_height="53dp"
+        android:layout_width="67dp"
+        android:layout_height="56dp"
         android:layout_marginBottom="8dp"
         android:background="@android:color/transparent"
         android:scaleType="fitStart"
@@ -114,14 +114,14 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/imgBtnTermometro"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintVertical_bias="0.988"
         app:srcCompat="@drawable/hearticon" />
 
     <ImageButton
         android:id="@+id/imgBtnTermometro"
-        android:layout_width="64dp"
-        android:layout_height="52dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="56dp"
+        android:layout_height="59dp"
+        android:layout_marginEnd="32dp"
         android:background="@android:color/transparent"
         android:scaleType="centerInside"
         android:visibility="visible"
@@ -130,7 +130,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.651"
+        app:layout_constraintVertical_bias="0.738"
         app:srcCompat="@drawable/temperatureicon" />
 
     <TextView
@@ -138,7 +138,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/capriola"
-        android:text="36.5 Cº"
+        android:text="28.5 ºC"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/containerAmbientTemperature"
         app:layout_constraintEnd_toEndOf="@+id/containerAmbientTemperature"
