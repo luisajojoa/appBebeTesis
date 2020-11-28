@@ -21,6 +21,7 @@ import com.tesis.bebeappble.bluetooth.BluetoothCommunication
 import com.tesis.bebeappble.bluetooth.TAG
 import com.tesis.bebeappble.common.Message
 import com.tesis.bebeappble.sensors.AbruptMovementsDetector
+import com.tesis.bebeappble.vibration.HearRateVibration
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,16 +36,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var path2 : String
     private lateinit var sliderTemp: SeekBar
     private var imageBaby : Drawable?=null
-    private lateinit var context : Context
     private var enableVideo =0
     private lateinit var termometerIcon : ImageButton
     private lateinit var heartIcon : ImageButton
+    private lateinit var hearRateVibration :HearRateVibration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        context = this
         mediaPlayer = MediaPlayer.create(this, R.raw.bebellorando )
+
+        hearRateVibration = HearRateVibration(this )
 
         retrieveViews()
         addListeners()
@@ -88,6 +90,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         heartIcon.setOnClickListener {
+
+            hearRateVibration.start(2)
             showMeasure(R.drawable.ic_heart_rate_mesure, "30 bpm")
         }
 
@@ -156,6 +160,7 @@ class MainActivity : AppCompatActivity() {
             window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
             setContentView(view)
         }
+        dialog.setOnDismissListener { hearRateVibration.stop() }
         dialog.show()
     }
     override fun onStart() {
