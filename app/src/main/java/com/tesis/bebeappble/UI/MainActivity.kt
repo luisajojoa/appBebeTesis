@@ -5,10 +5,13 @@ import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.os.Message
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintHelper
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.tesis.bebeappble.R
 import com.tesis.bebeappble.bluetooth.BluetoothCommunication
 import com.tesis.bebeappble.bluetooth.MessagesReceivedManager
@@ -28,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var path2 : String
     private lateinit var sliderTemp: SeekBar
     private var imageBaby : Drawable?=null
+    private lateinit var imageBabe : ConstraintLayout
     private var enableVideo =0
     private lateinit var termometerIcon : ImageButton
     private lateinit var heartIcon : ImageButton
@@ -79,11 +83,10 @@ class MainActivity : AppCompatActivity() {
         sliderTemp = findViewById(R.id.temperaturaSlider)
         termometerIcon = findViewById(R.id.imgBtnTermometro)
         heartIcon = findViewById(R.id.buttonHeartIconb)
+        imageBabe = findViewById(R.id.constraintBaby)
     }
 
     private fun addListeners() {
-
-
         //ENVIO DE DATOS!!
         /*btnSendMessage.setOnClickListener {
             val msj = editTextMessage.text.toString()
@@ -115,7 +118,6 @@ class MainActivity : AppCompatActivity() {
             return@setOnLongClickListener true
         }
 
-
         btnVideo.setOnClickListener {
 
             if( enableVideo ==0){
@@ -129,6 +131,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
         var startPoint : Int?= null
         var endPoint :Int ?= null
         sliderTemp.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
@@ -192,6 +195,24 @@ class MainActivity : AppCompatActivity() {
             }*/
         }
         //playingVideo(videoView, path1)
+        changingBabyAppearance()
+    }
+
+    private fun changingBabyAppearance(){
+        MessagesReceivedManager.listenNewTemperature {message ->
+            when (message.value) {
+                in 360..367 -> imageBabe.setBackgroundResource(R.drawable.bebesaludable)
+                in 368..374 -> imageBabe.setBackgroundResource(R.drawable.bebe_rojo_1)
+                in 375..381 -> imageBabe.setBackgroundResource(R.drawable.bebe_rojo_2)
+                in 382..387 -> imageBabe.setBackgroundResource(R.drawable.bebe_rojo_3)
+                in 388..420 -> imageBabe.setBackgroundResource(R.drawable.bebe_super_rojo)
+                in 330..343 -> imageBabe.setBackgroundResource(R.drawable.bluebaby)
+                in 344..349 -> imageBabe.setBackgroundResource(R.drawable.blue_baby_1)
+                in 350..355 -> imageBabe.setBackgroundResource(R.drawable.blue_baby_2)
+                in 355..359 -> imageBabe.setBackgroundResource(R.drawable.blue_baby_3)
+                else -> imageBabe.setBackgroundResource(R.drawable.bebesaludable)
+            }
+        }
     }
 
     override fun onStop() {

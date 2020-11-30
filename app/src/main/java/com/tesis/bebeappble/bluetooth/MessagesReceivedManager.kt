@@ -6,10 +6,15 @@ object MessagesReceivedManager {
 
 
     private var newMessageCallback : ((Message) -> Unit)? = null
-    val tempMessages = HashMap<String, Message>()
+    private var newTemperatureMessageCallback : ((Message) -> Unit)? = null
+    private val tempMessages = HashMap<String, Message>()
 
     fun listenNewMessages(callback: (Message) -> Unit){
         this.newMessageCallback = callback
+
+    }
+    fun listenNewTemperature(callback: (Message) -> Unit){
+        this.newTemperatureMessageCallback = callback
     }
 
     fun reportNewMessage(message: Message) {
@@ -18,6 +23,10 @@ object MessagesReceivedManager {
             if (lastMessage.value != message.value) {
                 tempMessages[message.javaClass.simpleName] = message
                 newMessageCallback?.invoke(message)
+                if(message.type == Message.Type.TEMPERATURE){
+                    newTemperatureMessageCallback?.invoke(message)
+                }
+
             }
         } else {
             tempMessages[message.javaClass.simpleName] = message
