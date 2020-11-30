@@ -17,20 +17,19 @@ import com.tesis.bebeappble.bluetooth.BluetoothCommunication
 import com.tesis.bebeappble.bluetooth.MessagesReceivedManager
 import com.tesis.bebeappble.sensors.AbruptMovementsDetector
 import com.tesis.bebeappble.vibration.HearRateVibration
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var editTextMessage: EditText
     private lateinit var btnSendMessage: Button
-
     private lateinit var mediaPlayer : MediaPlayer
     private lateinit var videoView : VideoView
     private lateinit var btnVideo : Button
     private lateinit var path1 : String
     private lateinit var path2 : String
     private lateinit var sliderTemp: SeekBar
-    private var imageBaby : Drawable?=null
     private lateinit var imageBabe : ConstraintLayout
     private var enableVideo =0
     private lateinit var termometerIcon : ImageButton
@@ -195,25 +194,9 @@ class MainActivity : AppCompatActivity() {
             }*/
         }
         //playingVideo(videoView, path1)
-        changingBabyAppearance()
+        BabyAppearance.changingBabyAppearance(imageBabe)
     }
 
-    private fun changingBabyAppearance(){
-        MessagesReceivedManager.listenNewTemperature {message ->
-            when (message.value) {
-                in 360..367 -> imageBabe.setBackgroundResource(R.drawable.bebesaludable)
-                in 368..374 -> imageBabe.setBackgroundResource(R.drawable.bebe_rojo_1)
-                in 375..381 -> imageBabe.setBackgroundResource(R.drawable.bebe_rojo_2)
-                in 382..387 -> imageBabe.setBackgroundResource(R.drawable.bebe_rojo_3)
-                in 388..420 -> imageBabe.setBackgroundResource(R.drawable.bebe_super_rojo)
-                in 330..343 -> imageBabe.setBackgroundResource(R.drawable.bluebaby)
-                in 344..349 -> imageBabe.setBackgroundResource(R.drawable.blue_baby_1)
-                in 350..355 -> imageBabe.setBackgroundResource(R.drawable.blue_baby_2)
-                in 355..359 -> imageBabe.setBackgroundResource(R.drawable.blue_baby_3)
-                else -> imageBabe.setBackgroundResource(R.drawable.bebesaludable)
-            }
-        }
-    }
 
     override fun onStop() {
         super.onStop()
