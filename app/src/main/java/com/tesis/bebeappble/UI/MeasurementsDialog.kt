@@ -26,19 +26,21 @@ class MeasurementsDialog(val activity: AppCompatActivity) {
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
-    fun showMeasure(icon: Int, type: Message.Type ,onDismissDialog: () -> Unit) {
+    fun showMeasure(icon: Int, message: Message? , onDismissDialog: () -> Unit) {
         val icon = activity.getDrawable(icon)
-        typeMessage = type
-        when(typeMessage) {
-            Message.Type.HEAR_RATE -> txtMeasurementsValue.text ="$heartRateValue bpm"
-            Message.Type.TEMPERATURE -> txtMeasurementsValue.text ="${temperatureValue.toDouble()/10} ºC"
+        if(message != null){
+            typeMessage = message.type
+            when(typeMessage) {
+                Message.Type.HEAR_RATE -> txtMeasurementsValue.text ="${message.value} bpm"
+                Message.Type.TEMPERATURE -> txtMeasurementsValue.text ="${message.value.toDouble()/10} ºC"
+            }
         }
         imageIcon.setImageDrawable(icon)
         dialog.setContentView(view)
         dialog.setOnDismissListener { onDismissDialog.invoke()}
         dialog.show()
     }
-
+/*
     fun updateMeasurements(message: Message) {
        // if(dialog.isShowing && typeMessage== message.type){
             when(message.type) {
@@ -46,10 +48,10 @@ class MeasurementsDialog(val activity: AppCompatActivity) {
                 Message.Type.TEMPERATURE -> temperatureValue = message.value
             }
         //}
-    }
-
+    }*/
+/*
     fun getHeartMeasurement() : Int{
         return heartRateValue
-    }
+    }*/
 
 }

@@ -1,24 +1,19 @@
 package com.tesis.bebeappble.UI
 
 
-import android.app.Dialog
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.Window
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.tesis.bebeappble.R
 import com.tesis.bebeappble.bluetooth.BluetoothCommunication
-import com.tesis.bebeappble.bluetooth.TAG
-import com.tesis.bebeappble.common.Message
+import com.tesis.bebeappble.bluetooth.MessagesReceivedManager
 import com.tesis.bebeappble.sensors.AbruptMovementsDetector
 import com.tesis.bebeappble.vibration.HearRateVibration
-import java.lang.IllegalArgumentException
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,9 +34,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var hearRateVibration :HearRateVibration
     private lateinit var measurementsDialog: MeasurementsDialog
 
+
     companion object{
         const val BABY_CRYING = 1
         const val BABY_NOT_CRYING = 0
+        const val HEART_RATE_MESSAGE = "HeartRateMessage"
+        const val BREATHING_RATE_MESSAGE = "BreathingRateMessage"
+        const val CRY_MESSAGE = "CryMessage"
+        const val TEMPERATURE_MESSAGE = "TemperatureMessage"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +56,8 @@ class MainActivity : AppCompatActivity() {
         retrieveViews()
         addListeners()
         measurementsDialog = MeasurementsDialog(this)
+
+
 
         path1 = "android.resource://" + packageName + "/" + R.raw.videotermometro
         // path2 = "android.resource://" + packageName + "/" + R.raw.video1
@@ -95,12 +97,14 @@ class MainActivity : AppCompatActivity() {
         }*/
 
         termometerIcon.setOnClickListener{
-            measurementsDialog.showMeasure(R.drawable.ic_temperature__mesure, Message.Type.TEMPERATURE){}
+            measurementsDialog.showMeasure(R.drawable.ic_temperature__mesure, MessagesReceivedManager.getMessage(
+                TEMPERATURE_MESSAGE)){}
         }
 
         heartIcon.setOnClickListener {
-            hearRateVibration.start(measurementsDialog.getHeartMeasurement())
-            measurementsDialog.showMeasure(R.drawable.ic_heart_rate_mesure, Message.Type.HEAR_RATE){
+            val hearRateMessage = MessagesReceivedManager.getMessage(HEART_RATE_MESSAGE)
+            hearRateVibration.start(hearRateMessage?.value)
+            measurementsDialog.showMeasure(R.drawable.ic_heart_rate_mesure, hearRateMessage){
                 hearRateVibration.stop()
             }
         }
@@ -164,10 +168,11 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         BluetoothCommunication.startAdvertising()
-        BluetoothCommunication.listenNewMessages { message ->
+        MessagesReceivedManager.listenNewMessages { message ->
+            Log.i("lajm","Llegó mensaje de tipo ${message.type} con el valor ${message.value}")
             //AQUI ESTAN VALORES LEIDOS POR BLUETOOTH
-            measurementsDialog.updateMeasurements(message)
-            when(message.type){
+           // measurementsDialog.updateMeasurements(message)
+            /*when(message.type){
                 Message.Type.HEAR_RATE -> Log.i("lajm", "heart rate ${message.value}" )
                 Message.Type.TEMPERATURE -> Log.i("lajm", "temperature ${message.value}" )
                 Message.Type.BREATHING_RATE -> Log.i("lajm", "breathing rate ${message.value}" )
@@ -184,7 +189,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 else -> throw IllegalArgumentException("Type recieved per bluetooth not valid")
-            }
+            }*/
         }
         //playingVideo(videoView, path1)
     }
@@ -192,7 +197,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         BluetoothCommunication.stopAdvertising()
-        BluetoothCommunication.stopListeningMessages()
+        MessagesReceivedManager.stopListeningMessages()
         //mediaPlayer.stop()
     }
 }

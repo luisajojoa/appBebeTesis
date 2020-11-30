@@ -14,12 +14,13 @@ object BluetoothCommunication {
     private lateinit var gattServer: BluetoothGattServer
     private var bleAdvertising: BluetoothLeAdvertiser? = null
     private val bleSettingsBuilder = BluetoothSettingsBuilder()
-    private var newMessageCallback : ((Message) -> Unit)? = null
+   // private var newMessageCallback : ((Message) -> Unit)? = null
     private lateinit var context: Context
     private var gattClient: BluetoothGatt?= null
 
+
     // HashMap guarda una llave y un Valor, La llave es el tipo de msj y el valor es el ultimo valor recibido
-    private val tempMessages = HashMap<String, Int>()
+    // private val tempMessages = HashMap<String, Int>()
 
     fun startBLE(context: Context) {
         this.context = context
@@ -65,11 +66,11 @@ object BluetoothCommunication {
             Log.i(TAG, "NULL characteristic sender")
         }
     }
-
+/*
     fun listenNewMessages(callback: (Message) -> Unit){
         this.newMessageCallback = callback
-    }
-
+    }*/
+/*
     fun reportNewMessage(message: Message) {
         val lastMessageValue = tempMessages[message.javaClass.simpleName]
         if (lastMessageValue != null) {
@@ -81,11 +82,11 @@ object BluetoothCommunication {
             tempMessages[message.javaClass.simpleName] = message.value
             newMessageCallback?.invoke(message)
         }
-    }
-    fun stopListeningMessages(){
+    }*/
+   /* fun stopListeningMessages(){
         //no reportar un nuevo mensaje
         newMessageCallback = null
-    }
+    }*/
     private class BebeGattServerCallback() : BluetoothGattServerCallback(){
         override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
             super.onConnectionStateChange(device, status, newState)
@@ -144,10 +145,10 @@ object BluetoothCommunication {
                     val temperature = BigInteger(reversedArray?.sliceArray(IntRange(4,5)))
                     val babyCry = BigInteger(reversedArray?.sliceArray(IntRange(6,7)))
 
-                    reportNewMessage(Message.HeartRateMessage(heartRate.toInt()))
-                    reportNewMessage(Message.BreathingRateMessage(breathingRate.toInt()))
-                    reportNewMessage(Message.TemperatureMessage(temperature.toInt()))
-                    reportNewMessage(Message.CryMessage(babyCry.toInt()))
+                    MessagesReceivedManager.reportNewMessage(Message.HeartRateMessage(heartRate.toInt()))
+                    MessagesReceivedManager.reportNewMessage(Message.BreathingRateMessage(breathingRate.toInt()))
+                    MessagesReceivedManager.reportNewMessage(Message.TemperatureMessage(temperature.toInt()))
+                    MessagesReceivedManager.reportNewMessage(Message.CryMessage(babyCry.toInt()))
                 }
         }
     }
