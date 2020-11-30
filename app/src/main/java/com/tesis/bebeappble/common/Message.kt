@@ -1,7 +1,11 @@
 package com.tesis.bebeappble.common
 
-sealed class Message(val value: String) {
-    class HeartRateMessage(value: String): Message(value)
-    class BreathingRateMessage(value: String): Message(value)
-    class TemperatureMessage(value: String): Message(value)
+sealed class Message(val value: Int, var type: Type) {
+    enum class Type{
+        HEAR_RATE,BREATHING_RATE,TEMPERATURE, CRY
+    }
+    class HeartRateMessage(value: Int, type : Type = Type.HEAR_RATE): Message(value, type)
+    class BreathingRateMessage(value: Int, type : Type = Type.BREATHING_RATE ): Message(value, type)
+    class TemperatureMessage(value: Int, type : Type = Type.TEMPERATURE): Message(value, type)
+    class CryMessage(value: Int, type : Type = Type.CRY): Message(value, type)
 }

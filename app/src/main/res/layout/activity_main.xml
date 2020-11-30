@@ -7,7 +7,7 @@
     android:background="@drawable/super_blue_baby"
     android:backgroundTintMode="screen"
     android:rotation="0"
-    tools:context=".MainActivity">
+    tools:context=".UI.MainActivity">
 
 
     <TextView

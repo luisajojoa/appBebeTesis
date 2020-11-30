@@ -19,7 +19,7 @@ object BluetoothCommunication {
     private var gattClient: BluetoothGatt?= null
 
     // HashMap guarda una llave y un Valor, La llave es el tipo de msj y el valor es el ultimo valor recibido
-    private val tempMessages = HashMap<String, String>()
+    private val tempMessages = HashMap<String, Int>()
 
     fun startBLE(context: Context) {
         this.context = context
@@ -142,10 +142,12 @@ object BluetoothCommunication {
                     val heartRate = BigInteger(reversedArray?.sliceArray(IntRange(0,1)))
                     val breathingRate = BigInteger(reversedArray?.sliceArray(IntRange(2,3)))
                     val temperature = BigInteger(reversedArray?.sliceArray(IntRange(4,5)))
+                    val babyCry = BigInteger(reversedArray?.sliceArray(IntRange(6,7)))
 
-                    reportNewMessage(Message.HeartRateMessage(heartRate.toString()))
-                    reportNewMessage(Message.BreathingRateMessage(breathingRate.toString()))
-                    reportNewMessage(Message.TemperatureMessage(temperature.toString()))
+                    reportNewMessage(Message.HeartRateMessage(heartRate.toInt()))
+                    reportNewMessage(Message.BreathingRateMessage(breathingRate.toInt()))
+                    reportNewMessage(Message.TemperatureMessage(temperature.toInt()))
+                    reportNewMessage(Message.CryMessage(babyCry.toInt()))
                 }
         }
     }

@@ -1,8 +1,7 @@
-package com.tesis.bebeappble
+package com.tesis.bebeappble.UI
 
 
 import android.app.Dialog
-import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
@@ -11,17 +10,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
+import com.tesis.bebeappble.R
 import com.tesis.bebeappble.bluetooth.BluetoothCommunication
 import com.tesis.bebeappble.bluetooth.TAG
 import com.tesis.bebeappble.common.Message
 import com.tesis.bebeappble.sensors.AbruptMovementsDetector
 import com.tesis.bebeappble.vibration.HearRateVibration
+import java.lang.IllegalArgumentException
 
 
 class MainActivity : AppCompatActivity() {
@@ -40,26 +37,38 @@ class MainActivity : AppCompatActivity() {
     private lateinit var termometerIcon : ImageButton
     private lateinit var heartIcon : ImageButton
     private lateinit var hearRateVibration :HearRateVibration
+    private lateinit var measurementsDialog: MeasurementsDialog
+
+    companion object{
+        const val BABY_CRYING = 1
+        const val BABY_NOT_CRYING = 0
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mediaPlayer = MediaPlayer.create(this, R.raw.bebellorando )
+        mediaPlayer = MediaPlayer.create(this,
+            R.raw.bebellorando
+        )
 
         hearRateVibration = HearRateVibration(this )
 
         retrieveViews()
         addListeners()
+        measurementsDialog = MeasurementsDialog(this)
 
         path1 = "android.resource://" + packageName + "/" + R.raw.videotermometro
         // path2 = "android.resource://" + packageName + "/" + R.raw.video1
         videoView.setVideoURI(Uri.parse(path1))
 
         BluetoothCommunication.startBLE(this)
+
         // ESTE ES EL CALLBACK DEL ABRUPTMOVEMENTS
         AbruptMovementsDetector(this).addMovementsListener {
             Log.i("lajm", "Movimiento abrupto! cuidado con Victoria ")
+            mediaPlayer.start()
         }
+
     }
 
     private fun retrieveViews() {
@@ -86,13 +95,14 @@ class MainActivity : AppCompatActivity() {
         }*/
 
         termometerIcon.setOnClickListener{
-            showMeasure(R.drawable.ic_temperature__mesure, "40 ºC")
+            measurementsDialog.showMeasure(R.drawable.ic_temperature__mesure, Message.Type.TEMPERATURE){}
         }
 
         heartIcon.setOnClickListener {
-
-            hearRateVibration.start(2)
-            showMeasure(R.drawable.ic_heart_rate_mesure, "30 bpm")
+            hearRateVibration.start(measurementsDialog.getHeartMeasurement())
+            measurementsDialog.showMeasure(R.drawable.ic_heart_rate_mesure, Message.Type.HEAR_RATE){
+                hearRateVibration.stop()
+            }
         }
 
         btnVideo.setOnLongClickListener {
@@ -150,27 +160,30 @@ class MainActivity : AppCompatActivity() {
         }
     }*/
 
-    private fun showMeasure(icon: Int, messure: String) {
-        val view = layoutInflater.inflate(R.layout.layout_show_measurements, null, false)
-        val icon = getDrawable(icon)
-        view.findViewById<ImageView>(R.id.imgIcon).setImageDrawable(icon)
-        view.findViewById<TextView>(R.id.txtMesure).text = messure
-        val dialog = Dialog(this).apply {
-            window?.requestFeature(Window.FEATURE_NO_TITLE)
-            window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
-            setContentView(view)
-        }
-        dialog.setOnDismissListener { hearRateVibration.stop() }
-        dialog.show()
-    }
+
     override fun onStart() {
         super.onStart()
         BluetoothCommunication.startAdvertising()
         BluetoothCommunication.listenNewMessages { message ->
-            when(message) {
-                is Message.HeartRateMessage -> Log.i(TAG, "Heart Rate: ${message.value}")
-                is Message.TemperatureMessage ->Log.i(TAG, "Temperature: ${message.value}")
-                is Message.BreathingRateMessage -> Log.i(TAG, "Breathing Rate: ${message.value}")
+            //AQUI ESTAN VALORES LEIDOS POR BLUETOOTH
+            measurementsDialog.updateMeasurements(message)
+            when(message.type){
+                Message.Type.HEAR_RATE -> Log.i("lajm", "heart rate ${message.value}" )
+                Message.Type.TEMPERATURE -> Log.i("lajm", "temperature ${message.value}" )
+                Message.Type.BREATHING_RATE -> Log.i("lajm", "breathing rate ${message.value}" )
+                Message.Type.CRY -> {Log.i("lajm", "isCrying? ${message.value}" )
+                    when(message.value){
+                        BABY_CRYING ->{
+                            mediaPlayer.start()
+                            Log.i("lajm", "si entró!!")
+                        }
+                        BABY_NOT_CRYING -> {
+                            Log.i("lajm", "no llorando")
+                            if(mediaPlayer.isPlaying) {mediaPlayer.pause()}
+                        }
+                    }
+                }
+                else -> throw IllegalArgumentException("Type recieved per bluetooth not valid")
             }
         }
         //playingVideo(videoView, path1)
