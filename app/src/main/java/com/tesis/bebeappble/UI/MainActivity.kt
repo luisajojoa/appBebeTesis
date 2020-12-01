@@ -173,25 +173,6 @@ class MainActivity : AppCompatActivity() {
         MessagesReceivedManager.listenNewMessages { message ->
             Log.i("lajm","Llegó mensaje de tipo ${message.type} con el valor ${message.value}")
             //AQUI ESTAN VALORES LEIDOS POR BLUETOOTH
-           // measurementsDialog.updateMeasurements(message)
-            /*when(message.type){
-                Message.Type.HEAR_RATE -> Log.i("lajm", "heart rate ${message.value}" )
-                Message.Type.TEMPERATURE -> Log.i("lajm", "temperature ${message.value}" )
-                Message.Type.BREATHING_RATE -> Log.i("lajm", "breathing rate ${message.value}" )
-                Message.Type.CRY -> {Log.i("lajm", "isCrying? ${message.value}" )
-                    when(message.value){
-                        BABY_CRYING ->{
-                            mediaPlayer.start()
-                            Log.i("lajm", "si entró!!")
-                        }
-                        BABY_NOT_CRYING -> {
-                            Log.i("lajm", "no llorando")
-                            if(mediaPlayer.isPlaying) {mediaPlayer.pause()}
-                        }
-                    }
-                }
-                else -> throw IllegalArgumentException("Type recieved per bluetooth not valid")
-            }*/
         }
         //playingVideo(videoView, path1)
         BabyAppearance.changingBabyAppearance(imageBabe)
