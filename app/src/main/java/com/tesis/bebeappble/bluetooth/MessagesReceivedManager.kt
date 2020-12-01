@@ -1,13 +1,16 @@
 package com.tesis.bebeappble.bluetooth
 
+import android.media.MediaPlayer
 import com.tesis.bebeappble.common.Message
 
 object MessagesReceivedManager {
 
-
     private var newMessageCallback : ((Message) -> Unit)? = null
     private var newTemperatureMessageCallback : ((Message) -> Unit)? = null
+    private var newCryingMessageCallback : ((Message) -> Unit)? = null
     private val tempMessages = HashMap<String, Message>()
+    private const val BABY_CRYING = 1
+    private const val BABY_NOT_CRYING = 0
 
     fun listenNewMessages(callback: (Message) -> Unit){
         this.newMessageCallback = callback
@@ -15,6 +18,10 @@ object MessagesReceivedManager {
     }
     fun listenNewTemperature(callback: (Message) -> Unit){
         this.newTemperatureMessageCallback = callback
+    }
+
+    private fun listenNewCrying(callback: (Message) -> Unit){
+        this.newCryingMessageCallback = callback
     }
 
     fun reportNewMessage(message: Message) {
@@ -25,6 +32,8 @@ object MessagesReceivedManager {
                 newMessageCallback?.invoke(message)
                 if(message.type == Message.Type.TEMPERATURE){
                     newTemperatureMessageCallback?.invoke(message)
+                }else if (message.type == Message.Type.CRY){
+                    newCryingMessageCallback?.invoke(message)
                 }
 
             }
@@ -42,5 +51,17 @@ object MessagesReceivedManager {
     fun stopListeningMessages(){
         //no reportar un nuevo mensaje
         newMessageCallback = null
+        newCryingMessageCallback = null
+        newTemperatureMessageCallback = null
+    }
+
+    fun babyCrying(mediaPlayer : MediaPlayer){
+        listenNewCrying { message ->
+            when(message.value){
+                BABY_NOT_CRYING -> mediaPlayer.pause()
+                BABY_CRYING -> mediaPlayer.start()
+            }
+
+        }
     }
 }

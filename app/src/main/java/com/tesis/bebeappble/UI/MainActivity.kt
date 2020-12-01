@@ -1,106 +1,76 @@
 package com.tesis.bebeappble.UI
 
 
-import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Bundle
-import android.os.Message
 import android.util.Log
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintHelper
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.tesis.bebeappble.R
 import com.tesis.bebeappble.bluetooth.BluetoothCommunication
+import com.tesis.bebeappble.bluetooth.MessageSender
 import com.tesis.bebeappble.bluetooth.MessagesReceivedManager
 import com.tesis.bebeappble.sensors.AbruptMovementsDetector
 import com.tesis.bebeappble.vibration.HearRateVibration
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var editTextMessage: EditText
-    private lateinit var btnSendMessage: Button
     private lateinit var mediaPlayer : MediaPlayer
     private lateinit var videoView : VideoView
-    private lateinit var btnVideo : Button
-    private lateinit var path1 : String
-    private lateinit var path2 : String
+    private lateinit var btnNoseBaby : Button
+    private lateinit var btnHeadBaby : Button
     private lateinit var sliderTemp: SeekBar
     private lateinit var imageBabe : ConstraintLayout
-    private var enableVideo =0
     private lateinit var termometerIcon : ImageButton
     private lateinit var heartIcon : ImageButton
     private lateinit var hearRateVibration :HearRateVibration
     private lateinit var measurementsDialog: MeasurementsDialog
-
+    private lateinit  var messageSender :MessageSender
+    private lateinit var babyAppearanceModifier : BabyAppearanceModifier
+    private lateinit var txtAmbientTemperature : TextView
+    private var counterNose :Int =0
 
     companion object{
-        const val BABY_CRYING = 1
-        const val BABY_NOT_CRYING = 0
         const val HEART_RATE_MESSAGE = "HeartRateMessage"
         const val BREATHING_RATE_MESSAGE = "BreathingRateMessage"
         const val CRY_MESSAGE = "CryMessage"
         const val TEMPERATURE_MESSAGE = "TemperatureMessage"
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mediaPlayer = MediaPlayer.create(this,
-            R.raw.bebellorando
-        )
-
-        hearRateVibration = HearRateVibration(this )
-
         retrieveViews()
         addListeners()
-        measurementsDialog = MeasurementsDialog(this)
-
-
-
-        path1 = "android.resource://" + packageName + "/" + R.raw.videotermometro
-        // path2 = "android.resource://" + packageName + "/" + R.raw.video1
-        videoView.setVideoURI(Uri.parse(path1))
-
         BluetoothCommunication.startBLE(this)
-
-        // ESTE ES EL CALLBACK DEL ABRUPTMOVEMENTS
-        AbruptMovementsDetector(this).addMovementsListener {
-            Log.i("lajm", "Movimiento abrupto! cuidado con Victoria ")
-            mediaPlayer.start()
-        }
-
+        mediaPlayer = MediaPlayer.create(this, R.raw.bebellorando)
+        hearRateVibration = HearRateVibration(this )
+        measurementsDialog = MeasurementsDialog(this)
+        messageSender = MessageSender(BluetoothCommunication)
+        babyAppearanceModifier = BabyAppearanceModifier()
     }
 
     private fun retrieveViews() {
         videoView  = findViewById(R.id.videoViewBebe)
-        btnVideo = findViewById(R.id.btnPlay)
+        btnNoseBaby = findViewById(R.id.btnNose)
+        btnHeadBaby = findViewById(R.id.btnHead)
         sliderTemp = findViewById(R.id.temperaturaSlider)
         termometerIcon = findViewById(R.id.imgBtnTermometro)
         heartIcon = findViewById(R.id.buttonHeartIconb)
         imageBabe = findViewById(R.id.constraintBaby)
+        txtAmbientTemperature = findViewById(R.id.ambientTemperatur)
+        val ambientTemperature :Double= sliderTemp.progress/10.toDouble()
+        txtAmbientTemperature.text= "$ambientTemperature ºC"
     }
 
     private fun addListeners() {
-        //ENVIO DE DATOS!!
-        /*btnSendMessage.setOnClickListener {
-            val msj = editTextMessage.text.toString()
-            BluetoothCommunication.sendMessage(msj)
-        }*/
-       /* btnBebe.setOnClickListener{
-            var imageBebe = ContextCompat.getDrawable(this,R.drawable.bebeas)
-            btnBebe.setImageDrawable(imageBebe)
-            //mediaPlayer.start()
-            playingVideo(videoView, path2)
-        }*/
 
         termometerIcon.setOnClickListener{
             measurementsDialog.showMeasure(R.drawable.ic_temperature__mesure, MessagesReceivedManager.getMessage(
-                TEMPERATURE_MESSAGE)){}
+                TEMPERATURE_MESSAGE))
         }
 
         heartIcon.setOnClickListener {
@@ -111,37 +81,31 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        btnVideo.setOnLongClickListener {
-            videoView.visibility = View.INVISIBLE
+        btnHeadBaby.setOnLongClickListener {
 //            Log.i("video", "videoview is visible? : ${videoView.isVisible}")
+            val msj = 400
+            messageSender.send(msj,messageSender.HEAD_TREATMENT)
+
             return@setOnLongClickListener true
         }
 
-        btnVideo.setOnClickListener {
-
-            if( enableVideo ==0){
-                mediaPlayer.start()
-                enableVideo =1
-
-            }else{
-                enableVideo= 0
-                mediaPlayer.pause()
-
+        btnNoseBaby.setOnClickListener {
+            /// AGREGAR INFO DE QUE SE TOCÓ LA NARIZ ENVIAR
+            counterNose += 1
+            if(counterNose == 3){
+                counterNose=0
             }
-
+            messageSender.send(counterNose, messageSender.NOSE_TREATMENT)
         }
 
         var startPoint : Int?= null
         var endPoint :Int ?= null
         sliderTemp.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                /*when(progress){
-                    in 30..32 -> imageBaby = ContextCompat.getDrawable(context,R.drawable.bebeas)
-                    in 33..35 -> imageBaby = ContextCompat.getDrawable(context,R.drawable.redbaby)
-                    in 36..38 -> imageBaby = ContextCompat.getDrawable(context,R.drawable.redbaby1)
-                    else -> imageBaby = ContextCompat.getDrawable(context,R.drawable.redbaby2)
-                }*/
-                //btnBebe.setImageDrawable(imageBaby)
+                // progress es el valor que necesito ENVIAR
+                messageSender.send(progress, messageSender.TEMPERATURE_INCUBATOR)
+                val ambientTemperature = progress/10.toDouble()
+                txtAmbientTemperature.text = "$ambientTemperature ºC"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -152,20 +116,7 @@ class MainActivity : AppCompatActivity() {
                 endPoint = seekBar?.progress
             }
         })
-
     }
-  /*  private fun playingVideo(videoView: VideoView, path:String){
-        videoView.setVideoURI(Uri.parse(path))
-        val isPlaying = videoView.isPlaying
-        val msg = getString(if (isPlaying) R.string.paused else R.string.playing)
-        Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
-        if (isPlaying) {
-            videoView.pause()
-        } else {
-            videoView.start()
-        }
-    }*/
-
 
     override fun onStart() {
         super.onStart()
@@ -174,15 +125,19 @@ class MainActivity : AppCompatActivity() {
             Log.i("lajm","Llegó mensaje de tipo ${message.type} con el valor ${message.value}")
             //AQUI ESTAN VALORES LEIDOS POR BLUETOOTH
         }
-        //playingVideo(videoView, path1)
-        BabyAppearance.changingBabyAppearance(imageBabe)
+        babyAppearanceModifier.change(imageBabe)
+        MessagesReceivedManager.babyCrying(mediaPlayer)
+        // ESTE ES EL CALLBACK DEL ABRUPTMOVEMENTS
+        AbruptMovementsDetector(this).addMovementsListener {
+            Log.i("lajm", "Movimiento abrupto! cuidado con Victoria ")
+            messageSender.send(1,messageSender.ABRUPT_MOVEMENT)
+            mediaPlayer.start()
+        }
     }
-
 
     override fun onStop() {
         super.onStop()
         BluetoothCommunication.stopAdvertising()
         MessagesReceivedManager.stopListeningMessages()
-        //mediaPlayer.stop()
     }
 }

@@ -14,7 +14,7 @@ object BluetoothCommunication {
     private lateinit var gattServer: BluetoothGattServer
     private var bleAdvertising: BluetoothLeAdvertiser? = null
     private val bleSettingsBuilder = BluetoothSettingsBuilder()
-   // private var newMessageCallback : ((Message) -> Unit)? = null
+    private var onBLEConnectedCallback : ((Message) -> Unit)? = null
     private lateinit var context: Context
     private var gattClient: BluetoothGatt?= null
 
@@ -45,16 +45,15 @@ object BluetoothCommunication {
         bleAdvertising?.stopAdvertising(BebeAdvertisingCallback())
     }
 
-    fun sendMessage(message: String){
+    fun sendMessage(message: ByteArray){
         // An object of type GattClient's characteristic is obtained trough the UIID of the send service and characteristic required
         val characteristic = gattClient?.getCharacteristic(ConstantsBle.SERVICE_SENDER_UUID, ConstantsBle.SENDER_CHARACTERISTIC_UUID)
         if(characteristic!=null) {
             //the characteristic's type is set up to write type for sending data
             characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
             // The message to be sent is converted to an array of bytes
-            val messageByteArray = message.toByteArray()
             // The array is sent to the remote device by changing the attribute "value" of the characteristic object
-            characteristic.value = messageByteArray
+            characteristic.value = message
             // Then the delivery status is retrieved
             val success = gattClient?.writeCharacteristic(characteristic) ?: false
             if (success){
@@ -66,27 +65,7 @@ object BluetoothCommunication {
             Log.i(TAG, "NULL characteristic sender")
         }
     }
-/*
-    fun listenNewMessages(callback: (Message) -> Unit){
-        this.newMessageCallback = callback
-    }*/
-/*
-    fun reportNewMessage(message: Message) {
-        val lastMessageValue = tempMessages[message.javaClass.simpleName]
-        if (lastMessageValue != null) {
-            if (lastMessageValue != message.value) {
-                tempMessages[message.javaClass.simpleName] = message.value
-                newMessageCallback?.invoke(message)
-            }
-        } else {
-            tempMessages[message.javaClass.simpleName] = message.value
-            newMessageCallback?.invoke(message)
-        }
-    }*/
-   /* fun stopListeningMessages(){
-        //no reportar un nuevo mensaje
-        newMessageCallback = null
-    }*/
+
     private class BebeGattServerCallback() : BluetoothGattServerCallback(){
         override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
             super.onConnectionStateChange(device, status, newState)
@@ -98,6 +77,7 @@ object BluetoothCommunication {
             if(newState==BluetoothProfile.STATE_CONNECTED){
                 //intenta conectarse a dispositivo remoto. Asi comienza a buscar servicios nuevos en su conexion
                 device?.connectGatt(context,false, object : BluetoothGattCallback(){
+
                     override fun onConnectionStateChange(
                         gatt: BluetoothGatt?,
                         status: Int,
