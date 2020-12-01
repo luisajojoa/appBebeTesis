@@ -45,7 +45,7 @@ object BluetoothCommunication {
         bleAdvertising?.stopAdvertising(BebeAdvertisingCallback())
     }
 
-    fun sendMessage(message: String){
+    fun sendMessage(message: BigInteger){
         // An object of type GattClient's characteristic is obtained trough the UIID of the send service and characteristic required
         val characteristic = gattClient?.getCharacteristic(ConstantsBle.SERVICE_SENDER_UUID, ConstantsBle.SENDER_CHARACTERISTIC_UUID)
         if(characteristic!=null) {
@@ -66,27 +66,6 @@ object BluetoothCommunication {
             Log.i(TAG, "NULL characteristic sender")
         }
     }
-/*
-    fun listenNewMessages(callback: (Message) -> Unit){
-        this.newMessageCallback = callback
-    }*/
-/*
-    fun reportNewMessage(message: Message) {
-        val lastMessageValue = tempMessages[message.javaClass.simpleName]
-        if (lastMessageValue != null) {
-            if (lastMessageValue != message.value) {
-                tempMessages[message.javaClass.simpleName] = message.value
-                newMessageCallback?.invoke(message)
-            }
-        } else {
-            tempMessages[message.javaClass.simpleName] = message.value
-            newMessageCallback?.invoke(message)
-        }
-    }*/
-   /* fun stopListeningMessages(){
-        //no reportar un nuevo mensaje
-        newMessageCallback = null
-    }*/
     private class BebeGattServerCallback() : BluetoothGattServerCallback(){
         override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
             super.onConnectionStateChange(device, status, newState)

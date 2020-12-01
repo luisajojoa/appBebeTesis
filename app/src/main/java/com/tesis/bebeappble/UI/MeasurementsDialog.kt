@@ -26,7 +26,7 @@ class MeasurementsDialog(val activity: AppCompatActivity) {
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
-    fun showMeasure(icon: Int, message: Message? , onDismissDialog: () -> Unit) {
+    fun showMeasure(icon: Int, message: Message? , onDismissDialog: () -> Unit = {}) {
         val icon = activity.getDrawable(icon)
         if(message != null){
             typeMessage = message.type

@@ -58,16 +58,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+
     <Button
-        android:id="@+id/btnPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/btnNose"
+        android:layout_width="49dp"
+        android:layout_height="37dp"
         android:background="@android:color/transparent"
         android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imgBtnTermometro"
+        app:layout_constraintHorizontal_bias="0.705"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
-
+        app:layout_constraintVertical_bias="0.697"
+        tools:visibility="visible" />
 
     <SeekBar
         android:id="@+id/temperaturaSlider"
@@ -144,6 +148,19 @@
         app:layout_constraintBottom_toBottomOf="@+id/containerAmbientTemperature"
         app:layout_constraintEnd_toEndOf="@+id/containerAmbientTemperature"
         app:layout_constraintStart_toEndOf="@+id/temperaturaSlider" />
+
+    <Button
+        android:id="@+id/btnHead"
+        android:layout_width="85dp"
+        android:layout_height="75dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imgBtnTermometro"
+        app:layout_constraintHorizontal_bias="0.538"
+        app:layout_constraintStart_toEndOf="@+id/btnNose"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.598" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

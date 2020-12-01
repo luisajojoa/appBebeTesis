@@ -5,9 +5,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.tesis.bebeappble.R
 import com.tesis.bebeappble.bluetooth.MessagesReceivedManager
 
-object BabyAppearance {
-    fun changingBabyAppearance(constraintLayout: ConstraintLayout){
-
+class BabyAppearanceModifier() {
+    fun change(constraintLayout: ConstraintLayout){
         MessagesReceivedManager.listenNewTemperature { message ->
             when (message.value) {
                 in 360..367 ->  constraintLayout.setBackgroundResource(R.drawable.bebesaludable)
