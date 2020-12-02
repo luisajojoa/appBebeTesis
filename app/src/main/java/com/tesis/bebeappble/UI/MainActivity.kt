@@ -32,20 +32,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var txtAmbientTemperature : TextView
     private var counterNose :Int =0
 
-    companion object{
-        const val HEART_RATE_MESSAGE = "HeartRateMessage"
-        const val BREATHING_RATE_MESSAGE = "BreathingRateMessage"
-        const val CRY_MESSAGE = "CryMessage"
-        const val TEMPERATURE_MESSAGE = "TemperatureMessage"
-
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         retrieveViews()
         addListeners()
-        BluetoothCommunication.startBLE(this)
+        BluetoothCommunication.startBLE(this){ success ->
+            if (success){
+                messageSender.send(sliderTemp.progress, MessageSender.TEMPERATURE_INCUBATOR)
+            }else {
+                Log.i("lajm", "No se pudo enviar el dato del slider de Temperatura")
+            }
+        }
         mediaPlayer = MediaPlayer.create(this, R.raw.bebellorando)
         hearRateVibration = HearRateVibration(this )
         measurementsDialog = MeasurementsDialog(this)
@@ -70,11 +68,11 @@ class MainActivity : AppCompatActivity() {
 
         termometerIcon.setOnClickListener{
             measurementsDialog.showMeasure(R.drawable.ic_temperature__mesure, MessagesReceivedManager.getMessage(
-                TEMPERATURE_MESSAGE))
+                MessagesReceivedManager.TEMPERATURE_MESSAGE))
         }
 
         heartIcon.setOnClickListener {
-            val hearRateMessage = MessagesReceivedManager.getMessage(HEART_RATE_MESSAGE)
+            val hearRateMessage = MessagesReceivedManager.getMessage(MessagesReceivedManager.HEART_RATE_MESSAGE)
             hearRateVibration.start(hearRateMessage?.value)
             measurementsDialog.showMeasure(R.drawable.ic_heart_rate_mesure, hearRateMessage){
                 hearRateVibration.stop()
@@ -84,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         btnHeadBaby.setOnLongClickListener {
 //            Log.i("video", "videoview is visible? : ${videoView.isVisible}")
             val msj = 400
-            messageSender.send(msj,messageSender.HEAD_TREATMENT)
+            messageSender.send(msj, MessageSender.HEAD_TREATMENT)
 
             return@setOnLongClickListener true
         }
@@ -95,7 +93,7 @@ class MainActivity : AppCompatActivity() {
             if(counterNose == 3){
                 counterNose=0
             }
-            messageSender.send(counterNose, messageSender.NOSE_TREATMENT)
+            messageSender.send(counterNose, MessageSender.NOSE_TREATMENT)
         }
 
         var startPoint : Int?= null
@@ -103,7 +101,7 @@ class MainActivity : AppCompatActivity() {
         sliderTemp.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 // progress es el valor que necesito ENVIAR
-                messageSender.send(progress, messageSender.TEMPERATURE_INCUBATOR)
+                messageSender.send(progress, MessageSender.TEMPERATURE_INCUBATOR)
                 val ambientTemperature = progress/10.toDouble()
                 txtAmbientTemperature.text = "$ambientTemperature ºC"
             }
@@ -130,7 +128,7 @@ class MainActivity : AppCompatActivity() {
         // ESTE ES EL CALLBACK DEL ABRUPTMOVEMENTS
         AbruptMovementsDetector(this).addMovementsListener {
             Log.i("lajm", "Movimiento abrupto! cuidado con Victoria ")
-            messageSender.send(1,messageSender.ABRUPT_MOVEMENT)
+            messageSender.send(1, MessageSender.ABRUPT_MOVEMENT)
             mediaPlayer.start()
         }
     }

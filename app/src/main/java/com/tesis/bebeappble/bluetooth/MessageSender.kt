@@ -8,10 +8,12 @@ class MessageSender(private val bluetoothCommunication : BluetoothCommunication)
     private var head = 0
     private var ambientTemperature = 0
     private var abruptMovement = 0
-    val NOSE_TREATMENT = 0
-    val HEAD_TREATMENT = 1
-    val ABRUPT_MOVEMENT = 3
-    val TEMPERATURE_INCUBATOR = 4
+    companion object {
+        const val NOSE_TREATMENT = 0
+        const val HEAD_TREATMENT = 1
+        const val ABRUPT_MOVEMENT = 3
+        const val TEMPERATURE_INCUBATOR = 4
+    }
 
     fun send(message: Int, type : Int){
         when(type){

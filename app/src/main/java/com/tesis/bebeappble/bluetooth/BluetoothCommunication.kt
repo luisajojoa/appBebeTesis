@@ -14,16 +14,17 @@ object BluetoothCommunication {
     private lateinit var gattServer: BluetoothGattServer
     private var bleAdvertising: BluetoothLeAdvertiser? = null
     private val bleSettingsBuilder = BluetoothSettingsBuilder()
-    private var onBLEConnectedCallback : ((Message) -> Unit)? = null
     private lateinit var context: Context
     private var gattClient: BluetoothGatt?= null
+    private var onConnectionEstablished : ((Boolean) -> Unit)? = null
 
 
     // HashMap guarda una llave y un Valor, La llave es el tipo de msj y el valor es el ultimo valor recibido
     // private val tempMessages = HashMap<String, Int>()
 
-    fun startBLE(context: Context) {
+    fun startBLE(context: Context, onConnectionEstablished :(Boolean)->Unit) {
         this.context = context
+        this.onConnectionEstablished = onConnectionEstablished
         // Para usar API bluetooth de Android
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         // Creando un GattServer
@@ -99,6 +100,9 @@ object BluetoothCommunication {
                         if (characteristic != null && gattClient == null) {
                             // se crea gatt client para no tener que escanear
                             gattClient = gatt
+                            onConnectionEstablished?.invoke(true)
+                        }else{
+                            onConnectionEstablished?.invoke(false)
                         }
                     }
                 })
