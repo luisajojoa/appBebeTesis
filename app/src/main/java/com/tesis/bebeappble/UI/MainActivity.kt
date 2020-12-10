@@ -97,7 +97,14 @@ class MainActivity : AppCompatActivity() {
             /// AGREGAR INFO DE QUE SE TOCÓ LA NARIZ ENVIAR
             counterNose += 1
             if(counterNose == 2){
-                counterNose=0
+                val temperature = MessagesReceivedManager.getMessage(MessagesReceivedManager.TEMPERATURE_MESSAGE)
+                if( temperature!= null) {
+                    if (temperature.value < 375) {
+                        counterNose = 0
+                    }
+                }
+            }else if(counterNose == 5){
+                counterNose = 0;
             }
             messageSender.send(counterNose.toBigInteger(), MessageSender.NOSE_TREATMENT)
         }
