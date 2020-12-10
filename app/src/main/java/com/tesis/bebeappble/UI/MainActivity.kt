@@ -11,6 +11,7 @@ import com.tesis.bebeappble.R
 import com.tesis.bebeappble.bluetooth.BluetoothCommunication
 import com.tesis.bebeappble.bluetooth.MessageSender
 import com.tesis.bebeappble.bluetooth.MessagesReceivedManager
+import com.tesis.bebeappble.common.Message
 import com.tesis.bebeappble.sensors.AbruptMovementsDetector
 import com.tesis.bebeappble.vibration.HearRateVibration
 
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var babyAppearanceModifier : BabyAppearanceModifier
     private lateinit var txtAmbientTemperature : TextView
     private var counterNose :Int =0
+    var counterHead = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         addListeners()
         BluetoothCommunication.startBLE(this){ success ->
             if (success){
-                messageSender.send(sliderTemp.progress, MessageSender.TEMPERATURE_INCUBATOR)
+                messageSender.send(sliderTemp.progress.toBigInteger(), MessageSender.TEMPERATURE_INCUBATOR)
             }else {
                 Log.i("lajm", "No se pudo enviar el dato del slider de Temperatura")
             }
@@ -81,8 +83,12 @@ class MainActivity : AppCompatActivity() {
 
         btnHeadBaby.setOnLongClickListener {
 //            Log.i("video", "videoview is visible? : ${videoView.isVisible}")
-            val msj = 400
-            messageSender.send(msj, MessageSender.HEAD_TREATMENT)
+            counterHead = if(counterHead == 0){
+                1
+            }else{
+                0
+            }
+            messageSender.send(counterHead.toBigInteger(), MessageSender.HEAD_TREATMENT)
 
             return@setOnLongClickListener true
         }
@@ -90,10 +96,10 @@ class MainActivity : AppCompatActivity() {
         btnNoseBaby.setOnClickListener {
             /// AGREGAR INFO DE QUE SE TOCÓ LA NARIZ ENVIAR
             counterNose += 1
-            if(counterNose == 3){
+            if(counterNose == 2){
                 counterNose=0
             }
-            messageSender.send(counterNose, MessageSender.NOSE_TREATMENT)
+            messageSender.send(counterNose.toBigInteger(), MessageSender.NOSE_TREATMENT)
         }
 
         var startPoint : Int?= null
@@ -101,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         sliderTemp.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 // progress es el valor que necesito ENVIAR
-                messageSender.send(progress, MessageSender.TEMPERATURE_INCUBATOR)
+                messageSender.send(progress.toBigInteger() , MessageSender.TEMPERATURE_INCUBATOR)
                 val ambientTemperature = progress/10.toDouble()
                 txtAmbientTemperature.text = "$ambientTemperature ºC"
             }
@@ -128,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         // ESTE ES EL CALLBACK DEL ABRUPTMOVEMENTS
         AbruptMovementsDetector(this).addMovementsListener {
             Log.i("lajm", "Movimiento abrupto! cuidado con Victoria ")
-            messageSender.send(1, MessageSender.ABRUPT_MOVEMENT)
+            messageSender.send(1.toBigInteger(), MessageSender.ABRUPT_MOVEMENT)
             mediaPlayer.start()
         }
     }
