@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         mediaPlayer = MediaPlayer.create(this, R.raw.bebellorando)
+        mediaPlayer.isLooping = true
         hearRateVibration = HearRateVibration(this )
         measurementsDialog = MeasurementsDialog(this)
         messageSender = MessageSender(BluetoothCommunication)
@@ -96,16 +97,10 @@ class MainActivity : AppCompatActivity() {
         btnNoseBaby.setOnClickListener {
             /// AGREGAR INFO DE QUE SE TOCÓ LA NARIZ ENVIAR
             counterNose += 1
-            if(counterNose == 2){
-                val temperature = MessagesReceivedManager.getMessage(MessagesReceivedManager.TEMPERATURE_MESSAGE)
-                if( temperature!= null) {
-                    if (temperature.value < 375) {
-                        counterNose = 0
-                    }
-                }
-            }else if(counterNose == 5){
-                counterNose = 0;
+            if (counterNose == 3) {
+                counterNose = 1
             }
+
             messageSender.send(counterNose.toBigInteger(), MessageSender.NOSE_TREATMENT)
         }
 
@@ -139,10 +134,15 @@ class MainActivity : AppCompatActivity() {
         babyAppearanceModifier.change(imageBabe)
         MessagesReceivedManager.babyCrying(mediaPlayer)
         // ESTE ES EL CALLBACK DEL ABRUPTMOVEMENTS
+        var msjAbruptMovementDetector = 0
         AbruptMovementsDetector(this).addMovementsListener {
-            Log.i("lajm", "Movimiento abrupto! cuidado con Victoria ")
-            messageSender.send(1.toBigInteger(), MessageSender.ABRUPT_MOVEMENT)
-            mediaPlayer.start()
+
+            msjAbruptMovementDetector = when(msjAbruptMovementDetector){
+                0 -> 1
+                1-> 0
+                else -> Log.i("lajm", "Entrada distinta movimiento abrupto ")
+            }
+            messageSender.send(msjAbruptMovementDetector.toBigInteger(), MessageSender.ABRUPT_MOVEMENT)
         }
     }
 
