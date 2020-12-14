@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                 0
             }
             messageSender.send(counterHead.toBigInteger(), MessageSender.HEAD_TREATMENT)
-
+            Log.i("luisajojoa","long clic cabeza")
             return@setOnLongClickListener true
         }
 
@@ -102,7 +102,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             messageSender.send(counterNose.toBigInteger(), MessageSender.NOSE_TREATMENT)
+            Log.i("luisajojoa", "CounterNose : $counterNose")
         }
+
 
         var startPoint : Int?= null
         var endPoint :Int ?= null

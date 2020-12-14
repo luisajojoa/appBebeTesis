@@ -9,8 +9,8 @@ object MessagesReceivedManager {
     private var newTemperatureMessageCallback : ((Message) -> Unit)? = null
     private var newCryingMessageCallback : ((Message) -> Unit)? = null
     private val tempMessages = HashMap<String, Message>()
-    private const val BABY_CRYING = 1
-    private const val BABY_NOT_CRYING = 0
+    const val BABY_CRYING = 1
+    const val BABY_NOT_CRYING = 0
     const val HEART_RATE_MESSAGE = "HeartRateMessage"
     const val BREATHING_RATE_MESSAGE = "BreathingRateMessage"
     const val CRY_MESSAGE = "CryMessage"
@@ -24,7 +24,7 @@ object MessagesReceivedManager {
         this.newTemperatureMessageCallback = callback
     }
 
-    private fun listenNewCrying(callback: (Message) -> Unit){
+    fun listenNewCrying(callback: (Message) -> Unit){
         this.newCryingMessageCallback = callback
     }
 

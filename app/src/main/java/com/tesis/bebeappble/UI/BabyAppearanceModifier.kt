@@ -14,10 +14,9 @@ class BabyAppearanceModifier() {
                 in 375..381 -> constraintLayout.setBackgroundResource(R.drawable.bebe_rojo_2)
                 in 382..387 -> constraintLayout.setBackgroundResource(R.drawable.bebe_rojo_3)
                 in 388..420 -> constraintLayout.setBackgroundResource(R.drawable.bebe_super_rojo)
-                in 330..343 -> constraintLayout.setBackgroundResource(R.drawable.bluebaby)
-                in 344..349 -> constraintLayout.setBackgroundResource(R.drawable.blue_baby_1)
-                in 350..355 -> constraintLayout.setBackgroundResource(R.drawable.blue_baby_2)
-                in 355..359 -> constraintLayout.setBackgroundResource(R.drawable.blue_baby_3)
+                in 330..347 -> constraintLayout.setBackgroundResource(R.drawable.bluebaby)
+                in 348..352 -> constraintLayout.setBackgroundResource(R.drawable.blue_baby_3)
+                in 353..359 -> constraintLayout.setBackgroundResource(R.drawable.blue_baby_2)
                 else -> constraintLayout.setBackgroundResource(R.drawable.bebesaludable)
             }
         }
