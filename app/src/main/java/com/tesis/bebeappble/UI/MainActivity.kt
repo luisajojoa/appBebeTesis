@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun retrieveViews() {
-        videoView  = findViewById(R.id.videoViewBebe)
         btnNoseBaby = findViewById(R.id.btnNose)
         btnHeadBaby = findViewById(R.id.btnHead)
         sliderTemp = findViewById(R.id.temperaturaSlider)
